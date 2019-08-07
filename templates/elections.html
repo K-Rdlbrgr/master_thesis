@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <!-- BOOTSTRAP -->
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
+    <!-- FONTAWESOME -->
+    <script src="https://kit.fontawesome.com/2b498beeb7.js"></script>
+    <link rel="stylesheet" href="/static/css/style_elections.css" />
+    <title>Nova Voting | Elections</title>
+  </head>
+
+  <body>
+    <div class="showcase-bg">
+      <div class="container header">
+        <h1 class="mt-5 text-center">VOTE. Ongoing Elections and Ballot Casting</h1>
+      </div>
+      <div class="container">
+        {% for election in elections %}
+          <div class="row justify-content-center align-items-center mt-4 no-gutters">
+            <div class="card">
+              <form action="{{ url_for('elections') }}" method="POST" id="ballot-form-{{ elections.index(election) }}" name="ballot-form-{{ elections.index(election) }}">
+                <input name="election-id" value="{{ election['id'] }}" hidden/>
+                <div class="row justify-content-center align-items-center">
+                  <div class="col-2 text-center">
+                    <strong># {{ election['id'] }}</strong>
+                  </div>
+                  <div class="col-10">
+                    {{ election['name'] }}
+                    {{ election['allowed_voters'] }}
+                  </div>
+                </div>
+                <div class="row justify-content-center align-items-center mt-3">
+                  <div class="col-2"></div>
+                  <div class="col-10">
+                    {% for option in election['options'] %}
+                      <input class="small" type="radio" id="Election-{{ elections.index(election) }}-Option-{{ election['options'].index(option) }}" name="voting-option" value="{{ option }}" required/>
+                      <label class="mr-2" for="Election-{{ elections.index(election) }}-Option-{{ election['options'].index(option) }}">{{ option }}</label>
+                    {% endfor %}
+                  </div>
+                </div>
+                <div class="row justify-content-center align-items-center mt-3">
+                  <input class="input-email" type="email" placeholder="Email" name="voting-email" required/>
+                </div>
+                {% with messages = get_flashed_messages(category_filter=["email-fail-" + election['id']]) %}
+                  {% if messages %}
+                    {%- for message in messages %}
+                    <div class="alert alert-danger alert-dismissible fade show mt-2" role="alert">
+                      <span>{{ message }}</span>
+                      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    {% endfor -%}
+                  {% endif %}
+                {% endwith %}
+                <div class="row justify-content-center align-items-center mt-3">
+                  <input class="input-email" type="password" placeholder="Password" name="voting-password" required/>
+                </div>
+                {% with messages = get_flashed_messages(category_filter=["password-fail-" + election['id']]) %}
+                  {% if messages %}
+                    {%- for message in messages %}
+                    <div class="alert alert-danger alert-dismissible fade show mt-2" role="alert">
+                      <span>{{ message }}</span>
+                      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    {% endfor -%}
+                  {% endif %}
+                {% endwith %}
+                {% with messages = get_flashed_messages(category_filter=["ballot-success-" + election['id']]) %}
+                  {% if messages %}
+                    {%- for message in messages %}
+                    <div class="alert alert-success alert-dismissible fade show mt-2" role="alert">
+                      <span>{{ message }}</span>
+                      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    {% endfor -%}
+                  {% endif %}
+                {% endwith %}
+                {% with messages = get_flashed_messages(category_filter=["multiple-fail-" + election['id']]) %}
+                  {% if messages %}
+                    {%- for message in messages %}
+                    <div class="alert alert-danger alert-dismissible fade show mt-2" role="alert">
+                      <span>{{ message }}</span>
+                      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    {% endfor -%}
+                  {% endif %}
+                {% endwith %}
+                <div class="row justify-content-center align-items-center mt-3">
+                  <button class=" button-color" type="submit" value="Submit">
+                    Submit
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        {% endfor %}
+        <div class="container text-center mt-5">
+          <button class="home-button mb-5" onclick="window.location.href = '{{ url_for("home") }}';">Back Home</button>
+        </div>
+      </div>
+    </div>
+    <!-- BOOTSTRAP SCRIPTS -->
+    <script
+      src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+      integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+      integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+      integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+      crossorigin="anonymous"
+    ></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='main.js') }}"></script>
+  </body>
+</html>

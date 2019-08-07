@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <!-- BOOTSTRAP -->
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
+    <!-- FONTAWESOME -->
+    <script src="https://kit.fontawesome.com/2b498beeb7.js"></script>
+    <link rel="stylesheet" href="/static/css/style_users.css" />
+    <title>Nova Voting | User Login</title>
+  </head>
+
+  <body>
+    <div class="showcase-bg">
+      <div class="container header">
+        <h1 class="mt-5 text-center">VOTE. User Registration and Login</h1>
+      </div>
+      <div class="container" id="container">
+        <div class="form-container sign-up-container">
+          <form action="{{ url_for('users') }}" method="POST" id="contact-form-register" name="contact-form-register">
+            <h1 class="mb-3">Create Account</h1>
+            <input type="email" placeholder="Email" name="register-email" required/>
+            {% with messages = get_flashed_messages(category_filter=["register-email"]) %}
+              {% if messages %}
+                {%- for message in messages %}
+                <div class="alert alert-danger alert-dismissible fade show mt-2" role="alert">
+                  <span>{{ message }}</span>
+                  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                {% endfor -%}
+              {% endif %}
+            {% endwith %}
+            <input type="password" placeholder="Password" name="register-password" required/>
+            <input type="password" placeholder="Confirm Password" name="register-password-confirm" required/>
+            {% with messages = get_flashed_messages(category_filter=["register-password"]) %}
+              {% if messages %}
+                {%- for message in messages %}
+                <div class="alert alert-danger alert-dismissible fade show mt-2" role="alert">
+                  <span>{{ message }}</span>
+                  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                {% endfor -%}
+              {% endif %}
+            {% endwith %}
+            <button class="mt-3 button-color" type="submit" value="Submit">
+              Sign Up
+            </button>
+            {% with messages = get_flashed_messages(category_filter=["register-success"]) %}
+              {% if messages %}
+                {%- for message in messages %}
+                <div class="alert alert-success alert-dismissible fade show mt-2" role="alert">
+                  <span>{{ message }}</span>
+                  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                {% endfor -%}
+              {% endif %}
+            {% endwith %}
+          </form>
+        </div>
+        <div class="form-container sign-in-container">
+          <form action="{{ url_for('users') }}" method="POST" id="contact-form-login" name="contact-form-login">
+            <h1 class="mb-3">Sign in</h1>
+            <input type="email" placeholder="Email" name="login-email" required/>
+            <input type="password" placeholder="Password" name="login-password" required/>
+            {% with messages = get_flashed_messages(category_filter=["login-fail"]) %}
+              {% if messages %}
+                {%- for message in messages %}
+                <div class="alert alert-danger alert-dismissible fade show mt-2" role="alert">
+                  <span>{{ message }}</span>
+                  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                {% endfor -%}
+              {% endif %}
+            {% endwith %}
+            <a href="#">Forgot your password?</a>
+            <button class="button-color" type="submit" value="Submit">Sign In</button>
+            {% with messages = get_flashed_messages(category_filter=["login-success"]) %}
+              {% if messages %}
+                {%- for message in messages %}
+                <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+                  <span>{{ message }}</span>
+                  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                {% endfor -%}
+              {% endif %}
+            {% endwith %}
+          </form>
+        </div>
+        <div class="overlay-container">
+          <div class="overlay">
+            <div class="overlay-panel overlay-left">
+              <h1>Welcome Back!</h1>
+              <p>
+                In order to take part in any election you will need to sign in
+              </p>
+              <button class="ghost button-transparent" id="signIn" onclick="slider()">Sign In</button>
+            </div>
+            <div class="overlay-panel overlay-right">
+              <h1>Hello, Friend!</h1>
+              <p>Enter your personal details and start your democracy journey with us</p>
+              <button class="ghost button-transparent" id="signUp" onclick="slider()">Sign Up</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="container text-center mt-5">
+        <button class="home-button mb-5" onclick="window.location.href = '{{ url_for("home") }}';">Back Home</button>
+      </div>
+    </div>
+
+    <!-- BOOTSTRAP SCRIPTS -->
+    <script
+      src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+      integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+      integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+      integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+      crossorigin="anonymous"
+    ></script>
+    <script type="text/javascript" src= "{{ url_for('static', filename='main.js') }}"></script>
+  </body>
+</html>
