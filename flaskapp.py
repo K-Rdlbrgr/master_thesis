@@ -4,11 +4,15 @@ import time
 app = Flask(__name__)
 app.secret_key = b'\xa3\x14\xa1B]\x8a\xda\xd3\xbf\xbf\x03E{\x1aYx'
 
+# Before implementing an SQL database (preferably using PostreSQL) we determine some example users, elections and an empty votes list where we store all the casted votes inside. All of the current attributes are just the starting point. We can add some more later on like hashing, timestamps, time limits for the elections and so on.
+
 user_db = [{'id': '34638', 'email': '34638@novasbe.pt', 'password': 'kevin'},
            {'id': '34646', 'email': '34646@novasbe.pt', 'password': 'nina'}]
 votes_db = []
 elections_db = [{'id': '1', 'name': 'Student Representatives Msc Finance 2019', 'allowed_voters': ['34638', '34646'], 'options': ['Alice', 'Bob', 'Charlie', 'Daniel']},
                 {'id': '2', 'name': 'University President 2019', 'allowed_voters': ['34646'], 'options': ['President 1', 'President 2']}]
+
+# Here we establish two classes based on the example above which are not used in the following code so far since I'm not sure if it actually makes more sense to use the classes in combination with the SQL database than just working with dictionaries.
 
 
 class user:
@@ -26,11 +30,15 @@ class vote:
         self.option = option
         self.timestamp = time.time()
 
+# In this part we define the different routes for the different pages. Within the routes we define what is happening when some inputs are posted to the website and which templates have to redirected to or rendered.
+
 
 @app.route('/')
 @app.route('/home/')
 def home():
     return render_template('index.html')
+
+# The user route so far contains the sign up and sign in functionalities. If no data is posted it just renders the user.html. If some data is posted the function identifies (by checking the lengths of the input) if a sign in or a sign up is being processed. Afterwards it uses the corresponding functions to login the user by checking its credentials or creating a new one with the posted input information.
 
 
 @app.route('/users/', methods=["GET", "POST"])
@@ -51,6 +59,8 @@ def users():
     else:
         return render_template('users.html')
 
+# First, the election route takes the election databse information to render the the elections.html with all the ongoing elections and displays them. Second, it gets the posted input values from the user and cast the ballot by adding the vote to the votes database.
+
 
 @app.route('/elections/', methods=["GET", "POST"])
 def elections():
@@ -62,11 +72,22 @@ def elections():
         return render_template('elections.html', elections=elections)
     else:
         elections = elections_db
-        for election in elections:
         return render_template('elections.html', elections=elections)
 
 
 # FUNCTIONS
+
+# The cast_ballot functions takes the input from the elections.html route. Going through the function it checks the following criteria in the listed order:
+    # - Looping through the election database until the right election for the casted ballot is found
+    # - Checking if the entered email is part of the allowed voters for that election
+    # - Looping through the user database until the right user is found and checking if the entered password matches the password in the database in order to successfully validate the user
+    # - Looping through the already casted votes in order to check if the user did not already casted a ballot for this election or not
+    # - If every single criteria is successfully validated, the vote is being added to the votes database and a flash message is send to the template, giving the user feedback that his ballot was successflly casted.
+    # - If any of the criteria was not met, the user gets a flash message about the specific error
+
+# Explanation Flash Messages
+# The flash message contains two inputs, the actual message which is being displayed on the website and the category of the message which we can use to determine the styling and positioning of the flash message on the website.
+
 def cast_ballot(email, password, option, election_id):
     for election in elections_db:
         if election_id == election['id']:
@@ -104,6 +125,8 @@ def cast_ballot(email, password, option, election_id):
                     'You are not eligable to vote in this election or you did not enter your email-correct!')
                 return False
 
+# The login function takes the credentials input from the users.html and loops through the user database in order to find the entered email and check if the entered password matches the one in the user database. Depending on the outcome it again sends a flash message to the template for giving the user feedback oabout the result of the login.
+
 
 def login(email_input, password_input):
     counter = 0
@@ -118,6 +141,8 @@ def login(email_input, password_input):
         flash('The email or password are not correct.', 'login-fail')
         print('The email or password are not correct.')
         return False
+
+# Thre register function does take the email and twice the password to make sure there are no typos in it from the form as an input. It checks if the entered email is not registered yet and if the passwords match each other. If successfull, it adds the user to the suer database. Again, the function sends flash messages as feedback to the user
 
 
 def register(email_input, password_input, password_rep_input):

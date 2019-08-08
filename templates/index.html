@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <!-- BOOTSTRAP -->
+    <!-- Importing Bootstrap which helps us write styling code much easier and clear and helps organizing the html content in a grid -->
     <link
       rel="stylesheet"
       href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
@@ -12,21 +13,25 @@
       crossorigin="anonymous"
     />
     <!-- FONTAWESOME -->
+    <!-- Linking Fontawesome in order to use icons which we can integrate into the html content and customize it in size -->
     <script src="https://kit.fontawesome.com/2b498beeb7.js"></script>
+    <!-- CSS -->
+    <!-- We link our own CSS style sheet in order to manipulate the appearance of our html code -->
     <link rel="stylesheet" href="/static/css/style.css" />
     <title>Nova Voting Solution</title>
   </head>
   <body>
     <div class="showcase-bg">
       <div class="container">
+        <!-- This is a bootstrap row which helps us dispalying our content clean and structures. In this case it solely contains the header -->
         <div class="row justify-content-start align-items-center showcase-row mb-5">
           <div class="col-12 text-center">
             <h1 id="Go">VOTE.</h1>
           </div>
         </div>
         <div class="row justify-content-between text-center">
+          <!-- This part contains the left side of the page containing the link to the admin page which has no function yet -->
           <div class="col-5">
-            <!-- <h1 id="Admin">ADMIN<br />SECTION</h1> -->
             <figure>
               <div>
                 <a href="#">
@@ -43,7 +48,7 @@
             </figure>
           </div>
           <div class="col-5">
-            <!-- <h1 id="User">USER<br />SECTION</h1> -->
+            <!-- This part contains the link to the user section which redirects to the users template -->
             <figure>
               <div>
                 <a href="{{ url_for('users') }}">
@@ -64,6 +69,7 @@
     </div>
 
     <!-- BOOTSTRAP SCRIPTS -->
+    <!-- More necessary scripts in order to use bootstrap on the website -->
     <script
       src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
       integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
