@@ -45,12 +45,13 @@ def home():
 def users():
     if request.method == "POST":
         req = request.form
-        if len(req) == 2:
+        print(req)
+        if req['form-type'] == 'login':
             if login(req['login-email'], req['login-password']):
                 return redirect(url_for('elections'))
             else:
                 return render_template('users.html')
-        elif len(req) == 3:
+        elif req['form-type'] == 'register':
             if register(req['register-email'], req['register-password'],
                         req['register-password-confirm']):
                 return redirect(url_for('elections'))
