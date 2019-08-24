@@ -129,42 +129,34 @@ def cast_ballot(email, password, option, election_id):
 
 
 def login(email_input, password_input):
-    counter = 0
     for user in user_db:
         if user['email'] == email_input and user['password'] == password_input:
             flash('You were successfully logged in', 'login-success')
             print('You succesfully logged in!')
             return True
-        else:
-            counter += 1
-    if counter == len(user_db):
-        flash('The email or password are not correct.', 'login-fail')
-        print('The email or password are not correct.')
-        return False
+    flash('The email or password are not correct.', 'login-fail')
+    print('The email or password are not correct.')
+    return False
 
 # Thre register function does take the email and twice the password to make sure there are no typos in it from the form as an input. It checks if the entered email is not registered yet and if the passwords match each other. If successfull, it adds the user to the suer database. Again, the function sends flash messages as feedback to the user
 
 
 def register(email_input, password_input, password_rep_input):
-    counter = 0
     for user in user_db:
         if user['email'] == email_input:
             flash('This email is already registered.', 'register-email')
             print('This email is already registered.')
             return False
-        else:
-            counter += 1
-    if counter == len(user_db):
-        if password_input != password_rep_input:
-            flash('The passwords do not match!', 'register-password')
-            print('The passwords do not match!')
-            return False
-        else:
-            user_db.append(
-                {'id': email_input[0:5], 'email': email_input, 'password': password_input})
-            flash('You successfully registered!', 'register-success')
-            print('You successfully registered!')
-            return True
+    if password_input != password_rep_input:
+        flash('The passwords do not match!', 'register-password')
+        print('The passwords do not match!')
+        return False
+    else:
+        user_db.append(
+            {'id': email_input[0:5], 'email': email_input, 'password': password_input})
+        flash('You successfully registered!', 'register-success')
+        print('You successfully registered!')
+        return True
 
 
 if __name__ == "__main__":
