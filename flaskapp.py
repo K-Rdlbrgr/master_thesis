@@ -90,41 +90,38 @@ def elections():
 # The flash message contains two inputs, the actual message which is being displayed on the website and the category of the message which we can use to determine the styling and positioning of the flash message on the website.
 
 def cast_ballot(email, password, option, election_id):
+    errors = []
     for election in elections_db:
         if election_id == election['id']:
-            if email[0:5] in election['allowed_voters']:
-                for user in user_db:
-                    if email[0:5] == user['id']:
-                        if password == user['password']:
-                            counter = 0
-                            for vote in votes_db:
-                                if email[0:5] == vote['user_id'] and election_id == vote['election_id']:
-                                    flash(
-                                        'You cannot vote twice on the same election!', 'multiple-fail-' + election_id)
-                                    print(
-                                        'You cannot vote twice on the same election!')
-                                    return False
-                                else:
-                                    counter += 1
-                            if counter == len(votes_db):
-                                votes_db.append({'id': str((len(votes_db)+1)), 'election_id': election_id,
-                                                 'user_id': email[0:5], 'option': option, 'timestamp': time.time()})
-                                flash('You succesfully casted your ballot!',
-                                      'ballot-success-' + election_id)
-                                print(
-                                    'You succesfully casted your ballot! ballot-success-' + election_id)
-                                return True
-                        else:
-                            flash(
-                                'You did not enter the correct password!', 'password-fail-' + election_id)
-                            print('You did not enter the correct password!')
-                            return False
-            else:
-                flash(
-                    'You are not eligable to vote in this election or you did not enter your email-correct!', 'email-fail-' + election_id)
+            if email[0:5] not in election['allowed_voters']:
+                errors.append('email-fail')
+                flash('You are not eligable to vote in this election or you did not enter your email-correct!',
+                      'email-fail-' + election_id)
                 print(
                     'You are not eligable to vote in this election or you did not enter your email-correct!')
-                return False
+    for user in user_db:
+        if email[0:5] == user['id']:
+            if password != user['password']:
+                errors.append('password-fail')
+                flash('You did not enter the correct password!',
+                      'password-fail-' + election_id)
+                print('You did not enter the correct password!')
+    for vote in votes_db:
+        if email[0:5] == vote['user_id'] and election_id == vote['election_id']:
+            errors.append('multiple-fail')
+            flash('You cannot vote twice on the same election!',
+                  'multiple-fail-' + election_id)
+            print('You cannot vote twice on the same election!')
+    if len(errors) == 0:
+        votes_db.append({'id': str((len(votes_db)+1)), 'election_id': election_id,
+                         'user_id': email[0:5], 'option': option, 'timestamp': time.time()})
+        flash('You succesfully casted your ballot!',
+              'ballot-success-' + election_id)
+        print('You succesfully casted your ballot! ballot-success-' + election_id)
+        return True
+    else:
+        print(errors)
+        return False
 
 # The login function takes the credentials input from the users.html and loops through the user database in order to find the entered email and check if the entered password matches the one in the user database. Depending on the outcome it again sends a flash message to the template for giving the user feedback oabout the result of the login.
 
