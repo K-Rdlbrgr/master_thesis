@@ -35,6 +35,8 @@
         <div class="form-container sign-up-container">
           <form action="{{ url_for('users') }}" method="POST" id="contact-form-register" name="contact-form-register">
             <h1 class="mb-3">Create Account</h1>
+            <!-- This input is used to distinguish between login and register form -->
+            <input type="hidden" name="form-type" value="register"/>
             <!-- This is the input form for the registration email -->
             <input type="email" placeholder="Email" name="register-email" required/>
             <!-- This block prints out the flash message if someone uses a mail address which is already registered -->
@@ -89,6 +91,8 @@
         <div class="form-container sign-in-container">
           <form action="{{ url_for('users') }}" method="POST" id="contact-form-login" name="contact-form-login">
             <h1 class="mb-3">Sign in</h1>
+            <!-- This input is used to distinguish between login and register form -->
+            <input type="hidden" name="form-type" value="login"/>
             <!-- This is the login email input -->
             <input type="email" placeholder="Email" name="login-email" required/>
             <!-- This is the login password input -->
