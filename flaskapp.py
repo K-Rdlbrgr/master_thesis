@@ -1,7 +1,13 @@
-test test 
 from flask import Flask, render_template, request, url_for, redirect, flash
+from flask_sqlalchemy import SQLAlchemy
 import time
 
+ENV = 'dev'
+
+if ENV == 'dev':
+    app.debug = True
+else:
+    app.debug = False
 
 app = Flask(__name__)
 app.secret_key = b'\xa3\x14\xa1B]\x8a\xda\xd3\xbf\xbf\x03E{\x1aYx'
@@ -160,4 +166,4 @@ def register(email_input, password_input, password_rep_input):
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run()
