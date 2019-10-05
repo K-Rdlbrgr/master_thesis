@@ -5,18 +5,90 @@ import time
 app = Flask(__name__)
 app.secret_key = b'\xa3\x14\xa1B]\x8a\xda\xd3\xbf\xbf\x03E{\x1aYx'
 
+# We introduce the ENV variable to quickly switch on and off debug mode depending on if we just want to develop the app or deploy and use it. It also sets the connection to our postgres database
+
 ENV = 'dev'
 
 if ENV == 'dev':
     app.debug = True
-    app.config['SQLALCHEMY_DB_URI'] = 'postgresql://postgres:thesis@localhost/master_thesis'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:thesis@localhost/master_thesis'
 else:
     app.debug = False
-    app.config['SQLALCHEMY_DB_URI'] = ''
+    app.config['SQLALCHEMY_DATABASE_URI'] = ''
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
+# We introduce our database model and define the different tables within the model  with all their columns
+
 db = SQLAlchemy(app)
+
+
+class Users(db.Model):
+    __tablename__ = 'users'
+    user_id = db.Column(db.Integer, primary_key=True)
+    election_id = db.Column(db.Integer, db.ForeignKey('elections.election_id'))
+    email = db.Column(db.String(16), unique=True)
+    password = db.Column(db.String(64))
+
+    def __init__(self, user_id, election_id, email, password):
+        self.user_id = user_id
+        self.election_id = election_id
+        self.email = email
+        self.password = password
+
+
+class Elections(db.Model):
+    __tablename__ = 'elections'
+    election_id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(200))
+    start_time = db.Column(db.TIMESTAMP)
+    end_time = db.Column(db.TIMESTAMP)
+    program = db.Column(db.String(50))
+
+    def __init__(self, election_id, name, start_time, end_time, program):
+        self.election_id = election_id
+        self.name = name
+        self.start_time = start_time
+        self.end_time = end_time
+        self.program = program
+
+
+class Candidates(db.Model):
+    __tablename__ = 'candidates'
+    candidate_id = db.Column(db.Integer, primary_key=True)
+    election_id = db.Column(
+        db.Integer, db.ForeignKey('elections.election_id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
+    name = db.Column(db.String(100))
+    program = db.Column(db.String(50))
+
+    def __init__(self, candidate_id, election_id, user_id, name, program):
+        self.candidate_id = candidate_id
+        self.election_id = election_id
+        self.user_id = user_id
+        self.name = name
+        self.program = program
+
+
+class Votes(db.Model):
+    __tablename__ = 'votes'
+    hash = db.Column(db.String(64), primary_key=True)
+    previous_hash = db.Column(db.String(64))
+    nonce = db.Column(db.Integer)
+    timestamp = db.Column(db.TIMESTAMP)
+    from_address = db.Column(db.String(300))
+    to_address = db.Column(db.String(300))
+    value = db.Column(db.Integer)
+
+    def __init__(self, hash, previous_hash, nonce, timestamp, from_address, to_address, value):
+        self.hash = hash
+        self.previous_hash = previous_hash
+        self.nonce = nonce
+        self.timestamp = timestamp
+        self.from_address = from_address
+        self.to_address = to_address
+        self.value = 1
+
 
 # Before implementing an SQL database (preferably using PostreSQL) we determine some example users, elections and an empty votes list where we store all the casted votes inside. All of the current attributes are just the starting point. We can add some more later on like hashing, timestamps, time limits for the elections and so on.
 
