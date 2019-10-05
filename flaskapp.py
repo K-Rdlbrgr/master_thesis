@@ -2,6 +2,9 @@ from flask import Flask, render_template, request, url_for, redirect, flash
 from flask_sqlalchemy import SQLAlchemy
 import time
 
+app = Flask(__name__)
+app.secret_key = b'\xa3\x14\xa1B]\x8a\xda\xd3\xbf\xbf\x03E{\x1aYx'
+
 ENV = 'dev'
 
 if ENV == 'dev':
@@ -9,8 +12,6 @@ if ENV == 'dev':
 else:
     app.debug = False
 
-app = Flask(__name__)
-app.secret_key = b'\xa3\x14\xa1B]\x8a\xda\xd3\xbf\xbf\x03E{\x1aYx'
 
 # Before implementing an SQL database (preferably using PostreSQL) we determine some example users, elections and an empty votes list where we store all the casted votes inside. All of the current attributes are just the starting point. We can add some more later on like hashing, timestamps, time limits for the elections and so on.
 
