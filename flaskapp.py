@@ -9,9 +9,14 @@ ENV = 'dev'
 
 if ENV == 'dev':
     app.debug = True
+    app.config['SQLALCHEMY_DB_URI'] = 'postgresql://postgres:thesis@localhost/master_thesis'
 else:
     app.debug = False
+    app.config['SQLALCHEMY_DB_URI'] = ''
 
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+db = SQLAlchemy(app)
 
 # Before implementing an SQL database (preferably using PostreSQL) we determine some example users, elections and an empty votes list where we store all the casted votes inside. All of the current attributes are just the starting point. We can add some more later on like hashing, timestamps, time limits for the elections and so on.
 
