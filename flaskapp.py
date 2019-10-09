@@ -295,6 +295,15 @@ def voting():
         return render_template('voting.html')
     else:
         return render_template('voting.html')
+    
+# Verification Page
+
+@app.route('/verification/', methods=["GET", "POST"])
+def verification():
+    if request.method == "POST":
+        return render_template('verification.html')
+    else:
+        return render_template('verification.html')
         
 
 # FUNCTIONS
