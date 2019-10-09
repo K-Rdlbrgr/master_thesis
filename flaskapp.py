@@ -287,6 +287,15 @@ def elections():
         elections = elections_db
         return render_template('elections.html', elections=elections)
 
+# Central Voting Page
+
+@app.route('/voting/', methods=["GET", "POST"])
+def voting():
+    if request.method == "POST":
+        return render_template('voting.html')
+    else:
+        return render_template('voting.html')
+        
 
 # FUNCTIONS
 
