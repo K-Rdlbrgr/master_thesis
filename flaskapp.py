@@ -98,24 +98,6 @@ votes_db = []
 elections_db = [{'id': '1', 'name': 'Student Representatives Msc Finance 2019', 'allowed_voters': ['34638', '34646'], 'options': ['Alice', 'Bob', 'Charlie', 'Daniel']},
                 {'id': '2', 'name': 'University President 2019', 'allowed_voters': ['34646'], 'options': ['President 1', 'President 2']}]
 
-# Here we establish two classes based on the example above which are not used in the following code so far since I'm not sure if it actually makes more sense to use the classes in combination with the SQL database than just working with dictionaries.
-
-
-class user:
-    def __init__(self, id, email, password):
-        self.id = id
-        self.email = email
-        self.password = password
-
-
-class vote:
-    def __init__(self, id, election_id, user_id, option):
-        self.id = id
-        self.election_id = election_id
-        self.user_id = user_id
-        self.option = option
-        self.timestamp = time.time()
-
 # In this part we define the different routes for the different pages. Within the routes we define what is happening when some inputs are posted to the website and which templates have to redirected to or rendered.
 
 

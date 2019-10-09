@@ -1,3 +1,4 @@
 {
-  "python.pythonPath": "/Users/kevin/.local/share/virtualenvs/master_thesis-F5416wfw/bin/python"
+  "python.pythonPath": "/Users/kevin/.local/share/virtualenvs/master_thesis-F5416wfw/bin/python",
+  "python.linting.pylintArgs": ["--load-plugins", "pylint-flask"]
 }
