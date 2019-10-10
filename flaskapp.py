@@ -1,5 +1,8 @@
 from flask import Flask, render_template, request, url_for, redirect, flash
 from flask_sqlalchemy import SQLAlchemy
+from bitcoin import *
+import json
+import hashlib
 import time
 
 app = Flask(__name__)
@@ -89,6 +92,147 @@ class Votes(db.Model):
         self.to_address = to_address
         self.value = 1
 
+# Now we establish the classes which we need for creating the Blockchain. First, we need the Transaction class which corresponds to one vote and one block on the chain. Then we construct the Blockchain class connecting all those transactions. Every functions we need to interact with the Blockchain is already implemented as methods in the classes.
+
+# 1. The Transactions class:
+
+class Transaction:
+    def __init__(self, timestamp, fromAddress, toAddress, previousHash=''):
+        self.fromAddress = fromAddress
+        self.toAddress = toAddress
+        self.previousHash = previousHash
+        self.amount = 1
+        self.timestamp = timestamp
+        self.nonce = 0
+        self.hash = self.calculateHash()
+
+    def calculateHash(self):
+        return sha256((self.previousHash + self.fromAddress + self.toAddress + str(self.nonce) + str(self.amount) + str(self.timestamp)).encode('utf-8'))
+
+    # The secureHash method imitates mining. It forces the system to recalculate the hash until the required difficulty is matched, meaning a minimm number of 0s is placed at the start of the hash
+
+    def secureHash(self, difficulty):
+        while self.hash[0:difficulty] != ''.join(['0' for i in range(0, difficulty)]):
+            self.nonce += 1
+            self.hash = self.calculateHash()
+
+    def signTransaction(self, signingKey):
+        if privtopub(signingKey) != self.fromAddress:
+            print('You cannot sign transactions for other wallets!')
+            return False
+        else:
+            sig = ecdsa_sign(self.hash, signingKey)
+            self.signature = sig
+            return True
+
+    def isValid(self):
+        if self.fromAddress == None:
+            return True
+        try:
+            if self.signature == 0 or len(self.signature) == 0:
+                print('No signature in this transaction')
+        except:
+            print('No signature in this transaction')
+            return False
+
+        return ecdsa_verify(self.calculateHash(), self.signature, self.fromAddress)
+
+# 2. The Blockchain class:
+
+class Blockchain:
+    def __init__(self):
+        self.chain = [self.createGenesisTransaction()]
+        self.difficulty = 1
+        self.pendingTransactions = []
+        self.miningReward = 100
+
+    def createGenesisTransaction(self):
+        return Transaction('13/11/2019', 'Genesis Transaction', 'Genesis Transaction')
+
+    def getLatestTransaction(self):
+        return self.chain[len(self.chain)-1]
+
+    # Here the actual vote from above gets created, signed and checked if everything is filled in correctly
+
+    def addTransaction(self, fromAddress, toAddress, signingKey):
+        flag = False
+        for trans in self.chain:
+            if trans.fromAddress == 'Genesis Transaction':
+                continue
+            elif trans.fromAddress == fromAddress:
+                print('Cannot vote twice')
+                flag = True
+
+        if fromAddress == None or toAddress == None:
+            print('Transaction must include from and to address')
+            flag = True
+
+        newTx = Transaction(time.time(), fromAddress, toAddress,
+                            self.getLatestTransaction().hash)
+        newTx.secureHash(self.difficulty)
+        if newTx.signTransaction(signingKey):
+            if not newTx.isValid():
+                print('Cannot add invalid transaction to chain')
+                flag = True
+        else:
+            flag = True
+
+        if not flag:
+            self.chain.append(newTx)
+            print('Transaction on the CHAIN')
+
+    # The method usually responsible for calculating the balance of a specific address will be used to count the votes of a candidate
+
+    def getBalanceOfAddress(self, address):
+        balance = 0
+
+        for trans in self.chain:
+            if trans.fromAddress == 'Genesis Transaction':
+                continue
+            else:
+                if trans.fromAddress == address:
+                    print(trans.amount)
+                    balance -= int(trans.amount)
+                if trans.toAddress == address:
+                    balance += trans.amount
+
+        return balance
+
+    # This method can be used to verify an individual vote after the user stated his private key
+
+    def getAllTransactionsForWallet(self, address):
+        txs = []
+
+        for trans in self.chain:
+            if trans.fromAddress == 'Genesis Transaction':
+                continue
+            elif trans.fromAddress == address or trans.toAddress == address:
+                txs.append(trans)
+
+        return txs
+
+    # We don't have to use this function but could either use it internally for us to keep track of the blockchain, checking it every now and then or even include it in the verification page. Hence, the user would be able to check with a button if the whole chain is valid
+
+    def isChainValid(self):
+        realGenesis = json.dumps(
+            self.createGenesisTransaction(), default=lambda x: x.__dict__)
+        if realGenesis != json.dumps(self.chain[0], default=lambda x: x.__dict__):
+            return False
+
+        for i in range(1, len(self.chain)):
+            currentTransaction = self.chain[i]
+            previousTransaction = self.chain[i-1]
+
+            if currentTransaction.hash != currentTransaction.calculateHash():
+                print(f'\nTransaction Number {i} got manipulated')
+                return False
+
+            if currentTransaction.previousHash != previousTransaction.hash:
+                print(
+                    f'\nLink between Transaction {i} and {i-1} got destroyed by an malicious attack')
+                return False
+
+        return True
 
 # Before implementing an SQL database (preferably using PostreSQL) we determine some example users, elections and an empty votes list where we store all the casted votes inside. All of the current attributes are just the starting point. We can add some more later on like hashing, timestamps, time limits for the elections and so on.
 
@@ -97,24 +241,6 @@ user_db = [{'id': '34638', 'email': '34638@novasbe.pt', 'password': 'kevin'},
 votes_db = []
 elections_db = [{'id': '1', 'name': 'Student Representatives Msc Finance 2019', 'allowed_voters': ['34638', '34646'], 'options': ['Alice', 'Bob', 'Charlie', 'Daniel']},
                 {'id': '2', 'name': 'University President 2019', 'allowed_voters': ['34646'], 'options': ['President 1', 'President 2']}]
-
-# Here we establish two classes based on the example above which are not used in the following code so far since I'm not sure if it actually makes more sense to use the classes in combination with the SQL database than just working with dictionaries.
-
-
-class user:
-    def __init__(self, id, email, password):
-        self.id = id
-        self.email = email
-        self.password = password
-
-
-class vote:
-    def __init__(self, id, election_id, user_id, option):
-        self.id = id
-        self.election_id = election_id
-        self.user_id = user_id
-        self.option = option
-        self.timestamp = time.time()
 
 # In this part we define the different routes for the different pages. Within the routes we define what is happening when some inputs are posted to the website and which templates have to redirected to or rendered.
 
@@ -161,6 +287,24 @@ def elections():
         elections = elections_db
         return render_template('elections.html', elections=elections)
 
+# Central Voting Page
+
+@app.route('/voting/', methods=["GET", "POST"])
+def voting():
+    if request.method == "POST":
+        return render_template('voting.html')
+    else:
+        return render_template('voting.html')
+    
+# Verification Page
+
+@app.route('/verification/', methods=["GET", "POST"])
+def verification():
+    if request.method == "POST":
+        return render_template('verification.html')
+    else:
+        return render_template('verification.html')
+        
 
 # FUNCTIONS
 

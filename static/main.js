@@ -7,3 +7,7 @@ function slider() {
 
   signInButton.addEventListener('click', () => container.classList.remove('right-panel-active'));
 }
+
+$('#myModal').on('shown.bs.modal', function() {
+  $('#myInput').focus();
+});
