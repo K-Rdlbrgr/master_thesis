@@ -1,4 +1,4 @@
 {
-  "python.pythonPath": "/Users/kevin/.local/share/virtualenvs/master_thesis-F5416wfw/bin/python",
+  "python.pythonPath": "C:\\Users\\ivoko\\AppData\\Local\\Programs\\Python\\Python37-32\\python.exe",
   "python.linting.pylintArgs": ["--load-plugins", "pylint-flask"]
 }
