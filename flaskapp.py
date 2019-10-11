@@ -1,9 +1,11 @@
 from flask import Flask, render_template, request, url_for, redirect, flash
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import *
 from bitcoin import *
 import json
 import hashlib
 import time
+import datetime
 
 app = Flask(__name__)
 app.secret_key = b'\xa3\x14\xa1B]\x8a\xda\xd3\xbf\xbf\x03E{\x1aYx'
@@ -64,13 +66,15 @@ class Candidates(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
     name = db.Column(db.String(100))
     program = db.Column(db.String(50))
+    address = db.Column(db.String(34), unique=True)
 
-    def __init__(self, candidate_id, election_id, user_id, name, program):
+    def __init__(self, candidate_id, election_id, user_id, name, program, address):
         self.candidate_id = candidate_id
         self.election_id = election_id
         self.user_id = user_id
         self.name = name
         self.program = program
+        self.address = address
 
 
 class Votes(db.Model):
@@ -95,6 +99,11 @@ class Votes(db.Model):
 # Now we establish the classes which we need for creating the Blockchain. First, we need the Transaction class which corresponds to one vote and one block on the chain. Then we construct the Blockchain class connecting all those transactions. Every functions we need to interact with the Blockchain is already implemented as methods in the classes.
 
 # 1. The Transactions class:
+
+
+# Set Difficulty
+
+difficulty = 3
 
 class Transaction:
     def __init__(self, timestamp, fromAddress, toAddress, previousHash=''):
@@ -234,6 +243,37 @@ class Blockchain:
 
         return True
 
+# Transition from Blockchain classes and methods to normal functions
+
+def calculateHash(vote):
+        return sha256((vote['previous_hash'] + vote['from_address'] + vote['to_address'] + str(vote['nonce']) + str(vote['value']) + str(vote['timestamp'])).encode('utf-8'))
+    
+def secureHash(vote, difficulty):
+        while vote['hash'][0:difficulty] != ''.join(['0' for i in range(0, difficulty)]):
+            vote['nonce'] += 1
+            vote['hash'] = calculateHash(vote)
+            
+def signVote(vote, signingKey):
+        if privtoaddr(signingKey) != vote['from_address']:
+            print('You cannot sign transactions for other wallets!')
+            return False
+        else:
+            sig = ecdsa_sign(vote['hash'], signingKey)
+            vote['signature'] = sig
+            return True
+
+def isValid(vote, pubkey):
+        if vote['from_address'] == None:
+            return True
+        try:
+            if vote['signature'] == 0 or len(vote['signature']) == 0:
+                print('No signature in this transaction')
+        except:
+            print('No signature in this transaction')
+            return False
+
+        return ecdsa_verify(calculateHash(vote), vote['signature'], pubkey)
+
 # Before implementing an SQL database (preferably using PostreSQL) we determine some example users, elections and an empty votes list where we store all the casted votes inside. All of the current attributes are just the starting point. We can add some more later on like hashing, timestamps, time limits for the elections and so on.
 
 user_db = [{'id': '34638', 'email': '34638@novasbe.pt', 'password': 'kevin'},
@@ -294,8 +334,111 @@ def voting():
     if request.method == "POST":
         return render_template('voting.html')
     else:
+        user_privateKey = random_key()
+        user_publicKey = privtopub(user_privateKey)
+        user_address = pubtoaddr(user_publicKey)
+        print(user_address)
+        
+        
         return render_template('voting.html')
     
+# Process Page
+
+@app.route('/process/', methods=["GET", "POST"])
+def process():
+    if request.method == "POST":
+        
+        # Creating User's KeyPair and Address
+        user_privateKey = random_key()
+        user_publicKey = privtopub(user_privateKey)
+        user_address = pubtoaddr(user_publicKey)
+        
+        # Accessing the input data from the User
+        req = request.form
+        print(req)
+        candidate = req['candidate']
+        
+        # Querying the database to find the previous hash
+        hash_query = """SELECT hash FROM votes
+                    ORDER BY timestamp DESC
+                    LIMIT 1"""
+                    
+        engine = create_engine('postgresql+psycopg2://postgres:thesis@localhost/master_thesis')
+        hash_results = engine.execute(hash_query)
+        for r in hash_results:
+            previous_hash = r[0]
+            
+        # Querying the database to find the address of the candidate    
+        address_query = f"""SELECT address FROM candidates
+                        WHERE name = '{candidate}'"""
+        
+        engine = create_engine('postgresql+psycopg2://postgres:thesis@localhost/master_thesis')
+        address_results = engine.execute(address_query)
+        for r in address_results:
+            address = r[0]
+            
+        # Creating the vote as a dictionary to later add to the Blockchain
+        new_vote = {'hash':'',
+                    'previous_hash': previous_hash,
+                    'nonce':0,
+                    'timestamp':datetime.datetime.now(),
+                    'from_address': user_address,
+                    'to_address': address,
+                    'value':1,
+                    'signature': ''} 
+        
+        # Set error flag to false before checking for errors
+        flag = False
+        
+        # Checking the blockchain if there is already a vote of the same address
+        vote_twice_query = f"""SELECT * FROM votes
+                            WHERE from_address = '{new_vote['from_address']}'"""
+                    
+        engine = create_engine('postgresql+psycopg2://postgres:thesis@localhost/master_thesis')
+        vote_twice_results = engine.execute(vote_twice_query)
+        for r in vote_twice_results:
+            if not len(r) == 0:
+                print('Cannot vote twice')
+                flag = True
+        
+        # for trans in self.chain:
+        #     if trans.fromAddress == 'Genesis Transaction':
+        #         continue
+        #     elif trans.fromAddress == fromAddress:
+        #         print('Cannot vote twice')
+        #         flag = True
+
+        #Check if both from and to address are given in the transaction
+        if new_vote['from_address'] == None or new_vote['to_address'] == None:
+            print('Transaction must include from and to address')
+            flag = True
+        
+        # Calculate the hash based on the information and secure it
+        print(new_vote)
+        new_vote['hash'] = calculateHash(new_vote)
+        secureHash(new_vote, difficulty)
+        
+        # Sign the transaction and check if the transaction is valid
+        if signVote(new_vote, user_privateKey):
+            if not isValid(new_vote, user_publicKey):
+                print('Cannot add invalid transaction to chain')
+                flag = True
+        else:
+            flag = True
+            
+        print(new_vote)
+
+        #Add the vote to the Blockchain
+        if not flag:
+            add_vote_query = f"""INSERT INTO votes (hash, previous_hash, nonce, timestamp, from_address, to_address, value, signature)
+                                VALUES ('{new_vote['hash']}', '{new_vote['previous_hash']}', {new_vote['nonce']}, '{new_vote['timestamp']}', '{new_vote['from_address']}', '{new_vote['to_address']}', {new_vote['value']}, '{new_vote['signature']}')"""
+                    
+            engine = create_engine('postgresql+psycopg2://postgres:thesis@localhost/master_thesis')
+            engine.execute(add_vote_query)
+            print('Transaction on the CHAIN')
+        
+        return render_template('process.html')
+
 # Verification Page
 
 @app.route('/verification/', methods=["GET", "POST"])
@@ -304,7 +447,7 @@ def verification():
         return render_template('verification.html')
     else:
         return render_template('verification.html')
-        
+
 
 # FUNCTIONS
 
