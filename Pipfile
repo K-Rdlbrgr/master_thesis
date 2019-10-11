@@ -9,10 +9,10 @@ pylint = "*"
 
 [packages]
 flask = "*"
-psycopg2 = "*"
 psycopg2-binary = "*"
 flask-sqlalchemy = "*"
 gunicorn = "*"
+psycopg2 = "*"
 
 [requires]
 python_version = "3.7"

@@ -370,7 +370,7 @@ def process():
             
         # Querying the database to find the address of the candidate    
         address_query = f"""SELECT address FROM candidates
-                        WHERE name = '{candidate}'"""
+                        WHERE name = 'Mogli'""" #{candidate}
         
         engine = create_engine('postgresql+psycopg2://postgres:thesis@localhost/master_thesis')
         address_results = engine.execute(address_query)
@@ -432,14 +432,17 @@ def process():
             engine.execute(add_vote_query)
             print('Transaction on the CHAIN')
         
-        return render_template('process.html')
+        return redirect(url_for('verification', user_address=user_address, user_publicKey=user_publicKey, user_privateKey=user_privateKey))
 
 # Verification Page
 
-@app.route('/verification/', methods=["GET", "POST"])
-def verification():
-    if request.method == "POST":
-        return render_template('verification.html')
+@app.route('/verification/<user_address>/<user_publicKey>/<user_privateKey>', methods=["GET", "POST"])
+def verification(user_address, user_publicKey, user_privateKey):
+    if request.method == "GET":
+        user_address = user_address
+        user_publicKey = user_publicKey
+        user_privateKey = user_privateKey
+        return render_template('verification.html',user_address=user_address, user_publicKey=user_publicKey, user_privateKey=user_privateKey)
     else:
         return render_template('verification.html')
 
