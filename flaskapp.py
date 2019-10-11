@@ -401,12 +401,7 @@ def process():
                 print('Cannot vote twice')
                 flag = True
         
-        # for trans in self.chain:
-        #     if trans.fromAddress == 'Genesis Transaction':
-        #         continue
-        #     elif trans.fromAddress == fromAddress:
-        #         print('Cannot vote twice')
-        #         flag = True
+        # IMPORTANT: WE NEED TO FIGURE OUT HOW TO CHECK HOW TO PREVENT DOUBLE VOTE SINCE WE'RE GENERATING NEW LINKS EVERYTIME THE USER RENDERS THE PAGE WHICH WOULD ALLOW THE USER TO GENERATE UNLIMITED KEYS AND ULTIMATELY VOTES
 
         #Check if both from and to address are given in the transaction
         if new_vote['from_address'] == None or new_vote['to_address'] == None:
