@@ -95,6 +95,22 @@ class Votes(db.Model):
         self.from_address = from_address
         self.to_address = to_address
         self.value = 1
+        
+    # Proposed Solution for Double Spending
+    class vote_check(db.Model):
+        __tablename__ = 'vote_check'
+        vote_check_id = db.Column(db.Integer, primary_key=True)
+        user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
+        election_id = db.Column(db.Integer, dg.ForeignKey('elections.election_id'))
+        link = db.Column(db.String(300), unique=True)
+        already_voted = db.Column(db.Boolean)
+        
+        def __init__(self, vote_check_id, user_id, election_id, link, already_voted):
+            self.vote_check_id = vote_check_id
+            self.user_id = user_id
+            self.election_id = election_id
+            self.link = link
+            self.already_voted = False
 
 # Now we establish the classes which we need for creating the Blockchain. First, we need the Transaction class which corresponds to one vote and one block on the chain. Then we construct the Blockchain class connecting all those transactions. Every functions we need to interact with the Blockchain is already implemented as methods in the classes.
 
@@ -317,8 +333,6 @@ def users():
 
 @app.route('/elections/', methods=["GET", "POST"])
 def elections():
-    # HERE we need to insert a condition in order to check if the voter alreday voted or not using the unique link they got via mail. Because afterwards the keys get generated which are different each time. This would allow users to vote over and over again because their addresses would change constantly.
-    # A possible solution would be another table in the database with the user_id, the corresponding link and a boolean value for already_voted that switches to True once, the vote got processed and added to the blockchain. Doing so, we would also be able to see who voted or not, regarding additional information for the survey.
     if request.method == "POST":
         elections = elections_db
         req = request.form
@@ -348,6 +362,12 @@ def voting():
 
 @app.route('/process/', methods=["GET", "POST"])
 def process():
+    # HERE we need to insert a condition in order to check if the voter alreday voted or not using the unique link they got via mail. Because afterwards the keys get generated which are different each time. This would allow users to vote over and over again because their addresses would change constantly.
+    # A possible solution would be another table in the database with the user_id, the corresponding link and a boolean value for already_voted that switches to True once, the vote got processed and added to the blockchain. Doing so, we would also be able to see who voted or not, regarding additional information for the survey.
+    
+    # ADD the correct lines of code to get the url or the embedded data (probably user_id/user e-mail and election_id) and save it to a variable
+    
+    # QUERY to check if this variable corresponding to the already_voted boolean in the vote_check table of the link the user used. If it's false, proceed. If it's true, render the error of not able to vote twice
     if request.method == "POST":
         
         # Creating User's KeyPair and Address
@@ -433,7 +453,8 @@ def process():
             engine = create_engine('postgresql+psycopg2://postgres:thesis@localhost/master_thesis')
             engine.execute(add_vote_query)
             print('Transaction on the CHAIN')
-        
+            
+            # Add QUERY to switch boolean of already_voted in the vote_check table from False to True        
         return redirect(url_for('verification', user_address=user_address, user_publicKey=user_publicKey, user_privateKey=user_privateKey))
     
     else:
