@@ -317,6 +317,8 @@ def users():
 
 @app.route('/elections/', methods=["GET", "POST"])
 def elections():
+    # HERE we need to insert a condition in order to check if the voter alreday voted or not using the unique link they got via mail. Because afterwards the keys get generated which are different each time. This would allow users to vote over and over again because their addresses would change constantly.
+    # A possible solution would be another table in the database with the user_id, the corresponding link and a boolean value for already_voted that switches to True once, the vote got processed and added to the blockchain. Doing so, we would also be able to see who voted or not, regarding additional information for the survey.
     if request.method == "POST":
         elections = elections_db
         req = request.form
@@ -433,6 +435,9 @@ def process():
             print('Transaction on the CHAIN')
         
         return redirect(url_for('verification', user_address=user_address, user_publicKey=user_publicKey, user_privateKey=user_privateKey))
+    
+    else:
+        render_template('process.html')
 
 # Verification Page
 
