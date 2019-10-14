@@ -8,9 +8,9 @@ function slider() {
   signInButton.addEventListener('click', () => container.classList.remove('right-panel-active'));
 }
 
-function copyFunction() {
+function copyFunction(id) {
   /* Get the text field */
-  var copyText = document.getElementById('copy_privateKey');
+  var copyText = document.getElementById(id);
 
   /* Select the text field */
   copyText.select();
