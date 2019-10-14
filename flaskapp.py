@@ -490,7 +490,10 @@ def verification(user_address, user_publicKey, user_privateKey):
         return render_template('verification.html',user_address=user_address, user_publicKey=user_publicKey, user_privateKey=user_privateKey)
     else:
         return render_template('verification.html')
-
+    
+@app.route('/verify/', methods=["GET", "POST"])
+def verify():
+    return render_template('verify.html')
 
 # FUNCTIONS
 

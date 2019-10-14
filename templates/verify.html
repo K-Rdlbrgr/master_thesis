@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <!-- BOOTSTRAP -->
+    <!-- Importing Bootstrap which helps us write styling code much easier and clear and helps organizing the html content in a grid -->
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
+    <!-- FONTAWESOME -->
+    <!-- Linking Fontawesome in order to use icons which we can integrate into the html content and customize it in size -->
+    <script src="https://kit.fontawesome.com/2b498beeb7.js"></script>
+    <!-- CSS -->
+    <!-- We link our own CSS style sheet in order to manipulate the appearance of our html code -->
+    <link rel="stylesheet" href="/static/css/style_verify.css" />
+    <title>NOVA SBE - Online Voting Verification</title>
+  </head>
+
+  <body>
+    <h1>THANK YOU FOR VOTING, IVO!</h1>
+    <h4 class="text-center">
+      This is the verification page, where you are able to use your voting credentials to verify if your vote has been
+      transmitted and recorded correctly
+    </h4>
+    <br />
+    <h4>Your Voting credentials are as follows:</h4>
+    <br />
+    <h6>Voter ID: 8327gfb9v23rh32b0r23</h6>
+    <h6>Voter Address: 8327gfb9v23rh32b0r23</h6>
+    <h6>Voter Key: 8327gfb9v23rh32b0r23</h6>
+    <br />
+    <h4 class="text-center">
+      Make sure you copy and save the information somewhere if you want to check your vote again later on, since this
+      will be the last time they will be displayed. We don't save the credentials in order to provide the anonymity and
+      privacy of every voter
+    </h4>
+    <br />
+    <br />
+    <h1>HERE WILL BE A MASSIVE BANNER TO PROMOTE OUR SURVEY</h1>
+    <br />
+    <br />
+    <h2>1</h2>
+    <h2>THE BLOCKCHAIN</h2>
+    <h6 class="text-center">
+      The Blockchain displayed here contains all the votes casted in the Student Representative Election 2019. The
+      hashes and previouses hashes of each block are connecting each of them, creating a chain of votes which can not be
+      tampered with unnoticeably and ultimately providing a secure and fair election. You can also see the addresses of
+      the voters which you can compare to your own but not the ones of the candidates in order to provide a fair result
+      until the end of the election. To provide another layer of trust the time of the casted vote is also displayed
+      which you can check.
+    </h6>
+    <h1>HERE WILL THE BLOCKCHAIN BE DISPLAYED</h1>
+    <br />
+    <br />
+    <h2>2</h2>
+    <h2>VERIFY YOUR VOTE</h2>
+    <h6 class="text-center">
+      In order to verify your vote already before and also after the end of the election, just paste your User Key in
+      the following box and hit the Verify Button.
+    </h6>
+    <div class="inline-block">
+      <label class="mr-3" for="private_key">Voter Key: </label
+      ><input type="text" name="private_key" id="private_key" value="" />
+    </div>
+    <button type="button" class="btn btn-primary" data-toggle="" data-target="">
+      Verify Vote
+    </button>
+    <h4>
+      This field is hidden until the point the user inserts their private key which toggles the display property,
+      showing the user his vote with every single Information: Hash, previous hash, from_address, to_address, name of
+      candidates, corresponding election and timestamp
+    </h4>
+    <br />
+    <br />
+    <h2>3</h2>
+    <h2>WIN 50€!</h2>
+    <h6 class="text-center">
+      Support our research by filling out the following 90 seconds survey and get into the race of a 50€ voucher for
+      whatever you need.
+    </h6>
+    <button type="button" class="btn btn-primary" data-toggle="" data-target="">
+      Survey Time
+    </button>
+
+    <!-- BOOTSTRAP SCRIPTS -->
+    <!-- More necessary scripts in order to use bootstrap on the website -->
+    <script
+      src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+      integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+      integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+      integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+      crossorigin="anonymous"
+    ></script>
+    <!-- We are linking the main JavaScript file here if we want to include some javascript functions -->
+    <script type="text/javascript" src="{{ url_for('static', filename='main.js') }}"></script>
+  </body>
+</html>
