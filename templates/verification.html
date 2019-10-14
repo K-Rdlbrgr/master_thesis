@@ -23,15 +23,71 @@
 
   <body>
     <h1>THANK YOU FOR VOTING, IVO!</h1>
-    <h4>
+    <h4 class="text-center">
       This is the verification page, where you are able to use your voting credentials to verify if your vote has been
       transmitted and recorded correctly
+    </h4>
+    <br />
+    <h4>Your Voting credentials are as follows:</h4>
+    <br />
+    <h6>Voter ID: {{ user_publicKey }}</h6>
+    <h6>Voter Address: {{ user_address }}</h6>
+    <h6>Voter Key: {{ user_privateKey }}</h6>
+    <br />
+    <h4 class="text-center">
+      Make sure you copy and save the information somewhere if you want to check your vote again later on, since this
+      will be the last time they will be displayed. We don't save the credentials in order to provide the anonymity and
+      privacy of every voter
     </h4>
     <br />
     <br />
     <h1>HERE WILL BE A MASSIVE BANNER TO PROMOTE OUR SURVEY</h1>
     <br />
     <br />
+    <h2>1</h2>
+    <h2>THE BLOCKCHAIN</h2>
+    <h6 class="text-center">
+      The Blockchain displayed here contains all the votes casted in the Student Representative Election 2019. The
+      hashes and previouses hashes of each block are connecting each of them, creating a chain of votes which can not be
+      tampered with unnoticeably and ultimately providing a secure and fair election. You can also see the addresses of
+      the voters which you can compare to your own but not the ones of the candidates in order to provide a fair result
+      until the end of the election. To provide another layer of trust the time of the casted vote is also displayed
+      which you can check.
+    </h6>
+    <h1>HERE WILL THE BLOCKCHAIN BE DISPLAYED</h1>
+    <br />
+    <br />
+    <h2>2</h2>
+    <h2>VERIFY YOUR VOTE</h2>
+    <h6 class="text-center">
+      In order to verify your vote already before and also after the end of the election, just paste your User Key in
+      the following box and hit the Verify Button.
+    </h6>
+    <div class="inline-block">
+      <label class="mr-3" for="private_key">Voter Key: </label
+      ><input type="text" name="private_key" id="private_key" value="" />
+    </div>
+    <button type="button" class="btn btn-primary" data-toggle="" data-target="">
+      Verify Vote
+    </button>
+    <h4>
+      This field is hidden until the point the user inserts their private key which toggles the display property,
+      showing the user his vote with every single Information: Hash, previous hash, from_address, to_address, name of
+      candidates, corresponding election and timestamp
+    </h4>
+    <br />
+    <br />
+    <h2>3</h2>
+    <h2>WIN 50€!</h2>
+    <h6 class="text-center">
+      Support our research by filling out the following 90 seconds survey and get into the race of a 50€ voucher for
+      whatever you need.
+    </h6>
+    <a href="">
+      <button type="button" class="btn btn-primary" data-toggle="" data-target="">
+        Survey Time
+      </button>
+    </a>
 
     <!-- BOOTSTRAP SCRIPTS -->
     <!-- More necessary scripts in order to use bootstrap on the website -->

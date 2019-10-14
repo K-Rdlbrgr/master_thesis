@@ -376,7 +376,6 @@ def process():
     already_voted_results = engine.execute(already_voted_query)
     for r in already_voted_results:
         already_voted = r[0]
-        print(already_voted)
     
     if request.method == "POST" and already_voted == False:
         
@@ -387,7 +386,6 @@ def process():
         
         # Accessing the input data from the User
         req = request.form
-        print(req)
         candidate = req['candidate']
         
         # Querying the database to find the previous hash
@@ -441,7 +439,6 @@ def process():
             flag = True
         
         # Calculate the hash based on the information and secure it
-        print(new_vote)
         new_vote['hash'] = calculateHash(new_vote)
         secureHash(new_vote, difficulty)
         
@@ -452,8 +449,6 @@ def process():
                 flag = True
         else:
             flag = True
-            
-        print(new_vote)
 
         #Add the vote to the Blockchain
         if not flag:
