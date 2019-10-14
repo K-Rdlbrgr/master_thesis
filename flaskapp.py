@@ -101,7 +101,7 @@ class Votes(db.Model):
         __tablename__ = 'vote_check'
         vote_check_id = db.Column(db.Integer, primary_key=True)
         user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
-        election_id = db.Column(db.Integer, dg.ForeignKey('elections.election_id'))
+        election_id = db.Column(db.Integer, db.ForeignKey('elections.election_id'))
         link = db.Column(db.String(300), unique=True)
         already_voted = db.Column(db.Boolean)
         
@@ -114,12 +114,11 @@ class Votes(db.Model):
 
 # Now we establish the classes which we need for creating the Blockchain. First, we need the Transaction class which corresponds to one vote and one block on the chain. Then we construct the Blockchain class connecting all those transactions. Every functions we need to interact with the Blockchain is already implemented as methods in the classes.
 
-# 1. The Transactions class:
-
-
 # Set Difficulty
 
 difficulty = 3
+
+# 1. The Transactions class:
 
 class Transaction:
     def __init__(self, timestamp, fromAddress, toAddress, previousHash=''):
@@ -366,9 +365,20 @@ def process():
     # A possible solution would be another table in the database with the user_id, the corresponding link and a boolean value for already_voted that switches to True once, the vote got processed and added to the blockchain. Doing so, we would also be able to see who voted or not, regarding additional information for the survey.
     
     # ADD the correct lines of code to get the url or the embedded data (probably user_id/user e-mail and election_id) and save it to a variable
+    # For now
+    user_link = 'personalized_link'
     
     # QUERY to check if this variable corresponding to the already_voted boolean in the vote_check table of the link the user used. If it's false, proceed. If it's true, render the error of not able to vote twice
-    if request.method == "POST":
+    already_voted_query = f"""SELECT already_voted FROM vote_check
+                            WHERE link = '{user_link}'"""
+                    
+    engine = create_engine('postgresql+psycopg2://postgres:thesis@localhost/master_thesis')
+    already_voted_results = engine.execute(already_voted_query)
+    for r in already_voted_results:
+        already_voted = r[0]
+        print(already_voted)
+    
+    if request.method == "POST" and already_voted == False:
         
         # Creating User's KeyPair and Address
         user_privateKey = random_key()
@@ -454,11 +464,20 @@ def process():
             engine.execute(add_vote_query)
             print('Transaction on the CHAIN')
             
-            # Add QUERY to switch boolean of already_voted in the vote_check table from False to True        
+            # Add QUERY to switch boolean of already_voted in the vote_check table from False to True 
+            update_already_voted_query = f"""UPDATE vote_check
+                                        SET already_voted = True
+                                        WHERE link = '{user_link}'"""
+                    
+            engine = create_engine('postgresql+psycopg2://postgres:thesis@localhost/master_thesis')
+            engine.execute(update_already_voted_query)
+            print('The already_voted status got updated')
+                  
         return redirect(url_for('verification', user_address=user_address, user_publicKey=user_publicKey, user_privateKey=user_privateKey))
     
     else:
-        render_template('process.html')
+        message = 'You cannot vote Twice'
+        return render_template('process.html', message = message)
 
 # Verification Page
 
