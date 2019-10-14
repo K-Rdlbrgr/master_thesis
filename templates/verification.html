@@ -76,13 +76,15 @@
       In order to verify your vote already before and also after the end of the election, just paste your User Key in
       the following box and hit the Verify Button.
     </h6>
-    <div class="inline-block">
-      <label class="mr-3" for="private_key">Voter Key: </label
-      ><input type="text" name="private_key" id="private_key" value="" />
-    </div>
-    <button type="button" class="btn btn-primary" data-toggle="" data-target="">
-      Verify Vote
-    </button>
+    <form action="{{ url_for('verify') }}" method="POST" id="verify_form">
+      <div class="inline-block">
+        <label class="mr-3" for="private_key">Voter Key: </label
+        ><input type="text" name="private_key" id="private_key" />
+      </div>
+      <div class="text-center">
+        <input class="btn btn-primary" type="submit" value="Submit" />
+      </div>
+    </form>
     <h4 class="text-center">
       This field is hidden until the point the user inserts their private key which toggles the display property,
       showing the user his vote with every single Information: Hash, previous hash, from_address, to_address, name of

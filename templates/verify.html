@@ -54,6 +54,17 @@
       candidates, corresponding election and timestamp
     </h4>
     <br />
+    {% if casted_vote != null %}
+    <p>Hash: {{ casted_vote['hash'] }}</p>
+    <p>Previous Hash: {{ casted_vote['previous_hash'] }}</p>
+    <p>Nonce: {{ casted_vote['nonce'] }}</p>
+    <p>Timestamp: {{ casted_vote['timestamp'] }}</p>
+    <p>From Address: {{ casted_vote['from_address'] }}</p>
+    <p>To Address: {{ casted_vote['to_address'] }}</p>
+    <p>Value: {{ casted_vote['value'] }}</p>
+    <p>Signature: {{ casted_vote['signature'] }}</p>
+    {% endif %}
+    <br />
     <br />
     <h2>3</h2>
     <h2>WIN 50€!</h2>

@@ -488,7 +488,41 @@ def verification(user_address, user_publicKey, user_privateKey):
     
 @app.route('/verify/', methods=["GET", "POST"])
 def verify():
-    return render_template('verify.html')
+    if request.method == "POST":
+        req = request.form
+        print(req)
+        
+        # Use the private key to generate the corresponding address
+        if len(req['private_key']) == 64:
+            vote_from_address = privtoaddr(req['private_key'])
+        else:
+            print('This is not a private key')
+        
+        # QUERY to find the correct transaction based on the address
+        verify_vote_query = f"""SELECT * FROM votes
+                        WHERE from_address = '{vote_from_address}'"""
+        
+        engine = create_engine('postgresql+psycopg2://postgres:thesis@localhost/master_thesis')
+        verify_vote_results = engine.execute(verify_vote_query)
+        verify_vote_result = verify_vote_results.first()
+        
+        # Check if there is an entry for the entered private key:
+        if verify_vote_result == None:
+            print('There is no corresponding vote to this private key')
+        else:
+            # Create a dictionary with the found transaction:
+            casted_vote = {'hash': verify_vote_result[0],
+                           'previous_hash': verify_vote_result[1],
+                           'nonce': verify_vote_result[2],
+                           'timestamp': verify_vote_result[3],
+                           'from_address': verify_vote_result[4],
+                           'to_address': verify_vote_result[5],
+                           'value': verify_vote_result[6],
+                           'signature': verify_vote_result[7]}
+            
+        return render_template('verify.html', casted_vote=casted_vote)
+    else:
+        return render_template('verify.html')
 
 # FUNCTIONS
 
