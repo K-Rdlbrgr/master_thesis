@@ -32,12 +32,17 @@
     <br />
     <h6>Voter ID: {{ user_publicKey }}</h6>
     <h6>Voter Address: {{ user_address }}</h6>
-    <h6>Voter Key: {{ user_privateKey }}</h6>
+    <h6>Voter Key:</h6>
+    <div class="inline-block">
+      <input type="text" value="{{ user_privateKey }}" id="copy_privateKey" size="70" />
+      <button type="button" class="btn btn-primary" onclick="copyFunction()">Copy</button>
+    </div>
     <br />
+
     <h4 class="text-center">
-      Make sure you copy and save the information somewhere if you want to check your vote again later on, since this
-      will be the last time they will be displayed. We don't save the credentials in order to provide the anonymity and
-      privacy of every voter
+      Make sure you copy and save the at least the Voter Key somewhere if you want to check your vote again later on,
+      since this will be the last time they will be displayed. We don't save the credentials in order to provide the
+      anonymity and privacy of every voter
     </h4>
     <br />
     <br />
