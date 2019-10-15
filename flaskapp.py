@@ -479,9 +479,33 @@ def process():
 @app.route('/verification/<user_address>/<user_publicKey>/<user_privateKey>', methods=["GET", "POST"])
 def verification(user_address, user_publicKey, user_privateKey):
     if request.method == "GET":
+        # Get the user credentials from the process.html
         user_address = user_address
         user_publicKey = user_publicKey
         user_privateKey = user_privateKey
+        
+        # Create empty list for Blockchain which will result in a list of dictionaries
+        blockchain = []
+        
+        # Query data for visualizing the Blockchain
+        blockchain_query = "SELECT * FROM votes" 
+        engine = create_engine('postgresql+psycopg2://postgres:thesis@localhost/master_thesis')
+        blockchain_results = engine.execute(blockchain_query)
+        
+        # Adding one block to the blockchain for every vote
+        for vote in blockchain_results:
+            blockchain.append({'hash': vote[0],
+                               'previous_hash': vote[1],
+                               'nonce': vote[2],
+                               'timestamp': vote[3],
+                               'from_address': vote[4],
+                               'to_address': vote[5],
+                               'value': vote[6],
+                               'signature': vote[7]})
+            
+        print(blockchain)
+        print(len(blockchain))
+        
         return render_template('verification.html',user_address=user_address, user_publicKey=user_publicKey, user_privateKey=user_privateKey)
     else:
         return render_template('verification.html')
@@ -489,6 +513,28 @@ def verification(user_address, user_publicKey, user_privateKey):
 @app.route('/verify/', methods=["GET", "POST"])
 def verify():
     if request.method == "POST":
+        # Create empty list for Blockchain which will result in a list of dictionaries
+        blockchain = []
+        
+        # Query data for visualizing the Blockchain
+        blockchain_query = "SELECT * FROM votes" 
+        engine = create_engine('postgresql+psycopg2://postgres:thesis@localhost/master_thesis')
+        blockchain_results = engine.execute(blockchain_query)
+        
+        # Adding one block to the blockchain for every vote
+        for vote in blockchain_results:
+            blockchain.append({'hash': vote[0],
+                               'previous_hash': vote[1],
+                               'nonce': vote[2],
+                               'timestamp': vote[3],
+                               'from_address': vote[4],
+                               'to_address': vote[5],
+                               'value': vote[6],
+                               'signature': vote[7]})
+            
+        print(blockchain)
+        print(len(blockchain))
+        
         req = request.form
         print(req)
         
@@ -497,6 +543,8 @@ def verify():
             vote_from_address = privtoaddr(req['private_key'])
         else:
             print('This is not a private key')
+            flash('This is not a private key', 'no_private_key_fail')
+            return render_template('verify.html')
         
         # QUERY to find the correct transaction based on the address
         verify_vote_query = f"""SELECT * FROM votes
@@ -509,6 +557,8 @@ def verify():
         # Check if there is an entry for the entered private key:
         if verify_vote_result == None:
             print('There is no corresponding vote to this private key')
+            flash('There is no corresponding vote to this private key', 'wrong_private_key_fail')
+            return render_template('verify.html')            
         else:
             # Create a dictionary with the found transaction:
             casted_vote = {'hash': verify_vote_result[0],
@@ -522,6 +572,28 @@ def verify():
             
         return render_template('verify.html', casted_vote=casted_vote)
     else:
+        # Create empty list for Blockchain which will result in a list of dictionaries
+        blockchain = []
+        
+        # Query data for visualizing the Blockchain
+        blockchain_query = "SELECT * FROM votes" 
+        engine = create_engine('postgresql+psycopg2://postgres:thesis@localhost/master_thesis')
+        blockchain_results = engine.execute(blockchain_query)
+        
+        # Adding one block to the blockchain for every vote
+        for vote in blockchain_results:
+            blockchain.append({'hash': vote[0],
+                               'previous_hash': vote[1],
+                               'nonce': vote[2],
+                               'timestamp': vote[3],
+                               'from_address': vote[4],
+                               'to_address': vote[5],
+                               'value': vote[6],
+                               'signature': vote[7]})
+            
+        print(blockchain)
+        print(len(blockchain))
+        
         return render_template('verify.html')
 
 # FUNCTIONS
