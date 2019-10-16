@@ -1,5 +1,13 @@
 @import url('https://fonts.googleapis.com/css?family=Montserrat:400,800');
 
+:root {
+  --primary-bg-light: rgb(247, 247, 247);
+  --primary-bg-color-1: rgb(49, 224, 131);
+  --primary-bg-color-2: rgba(25, 205, 227);
+  --primary-text-dark: rgb(27, 27, 27);
+  --primary-text-bright: rgb(247, 247, 247);
+}
+
 * {
   box-sizing: border-box;
 }
@@ -10,6 +18,7 @@ body {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  color: var(--primary-text-dark);
 }
 
 h1 {
@@ -38,4 +47,145 @@ a {
 
 hr {
   color: #333;
+}
+
+/* Individual divs */
+.header-overlap {
+  background-color: rgba(27, 27, 27, 0.6);
+  height: 80vh;
+  border-top: 8px solid white;
+  border-left: 8px solid white;
+  border-right: 8px solid white;
+  border-bottom: 0px solid white;
+}
+
+.nova-logo-header img {
+  /* position: absolute;
+  left: 45px;
+  top: 25px; */
+  width: 80%;
+  margin-left: 15px;
+}
+
+hr.nova-logo {
+  background: white;
+  border: 5px solid white;
+  margin-top: 30px;
+}
+
+.nova-logo-header {
+  height: 100px;
+}
+
+.header-wrapper {
+  background-image: url(/static/img/wallpaper-1.jpeg);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  color: var(--primary-text-bright);
+  width: 100%;
+  height: 80vh;
+}
+
+.election-info-wrapper {
+  background: white;
+  color: var(--primary-text-dark);
+  width: 100%;
+  max-height: 250px;
+  margin: 40px 0;
+}
+
+.select-candidate-wrapper {
+  background: linear-gradient(12deg, rgba(49, 224, 131, 1) 0%, rgba(25, 205, 227, 1) 100%);
+  color: var(--primary-text-bright);
+  width: 100%;
+  max-height: 570px;
+}
+
+.select-candidate-wrapper svg {
+  max-height: 500px;
+}
+
+.submit-vote-wrapper {
+  background: white;
+  color: var(--primary-text-dark);
+  width: 100%;
+  max-height: 400px;
+}
+
+.header {
+  padding: 80px 0 100px 0;
+}
+
+.election-info {
+  padding: 40px 0;
+}
+
+.select-candidate {
+  padding: 60px 0;
+}
+
+.candidate-input {
+  margin: 35px 25% 0 35%;
+}
+
+.submit-vote {
+  padding: 0 0 60px 0;
+}
+
+.submit-vote svg text,
+.modal-title svg text {
+  stroke: white;
+}
+
+.submit-vote svg circle,
+.modal-title svg circle {
+  fill: rgba(49, 224, 131, 1);
+}
+
+.submit-vote button {
+  background: linear-gradient(12deg, rgba(49, 224, 131, 1) 0%, rgba(25, 205, 227, 1) 200%);
+  border-radius: 20px;
+  color: white;
+  border: white 5px solid;
+  transition: all 0.4s ease-out;
+}
+
+.submit-vote button:hover {
+  background: linear-gradient(12deg, rgb(42, 185, 109) 0%, rgb(20, 162, 180) 200%);
+  color: white;
+  border-color: var(--primary-bg-light);
+}
+
+.line {
+  border-right: var(--primary-text-dark) 2px solid;
+  border-bottom: var(--primary-text-dark) 4px solid;
+  height: 80vh;
+  background: var(--primary-text-dark);
+  color: var(--primary-bg-light);
+}
+
+.lina {
+  border-left: var(--primary-text-dark) 2px solid;
+  border-bottom: var(--primary-text-dark) 4px solid;
+  height: 80vh;
+}
+
+.confirm-vote input {
+  background: linear-gradient(12deg, rgba(49, 224, 131, 1) 0%, rgba(25, 205, 227, 1) 200%);
+  border-radius: 20px;
+  color: white;
+  border: white 5px solid;
+  transition: all 0.4s ease-out;
+}
+
+.confirm-vote input:hover {
+  background: linear-gradient(12deg, rgb(42, 185, 109) 0%, rgb(20, 162, 180) 200%);
+  color: white;
+  border-color: var(--primary-bg-light);
+}
+
+.modal-close {
+  position: absolute;
+  left: 93%;
 }
