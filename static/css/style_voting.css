@@ -140,7 +140,7 @@ hr.nova-logo {
 
 .submit-vote svg circle,
 .modal-title svg circle {
-  fill: rgba(49, 224, 131, 1);
+  fill: black;
 }
 
 .submit-vote button {

@@ -1,5 +1,13 @@
 @import url('https://fonts.googleapis.com/css?family=Montserrat:400,800');
 
+:root {
+  --primary-bg-light: rgb(247, 247, 247);
+  --primary-bg-color-1: rgb(49, 224, 131);
+  --primary-bg-color-2: rgba(25, 205, 227);
+  --primary-text-dark: rgb(27, 27, 27);
+  --primary-text-bright: rgb(247, 247, 247);
+}
+
 * {
   box-sizing: border-box;
 }
@@ -38,4 +46,54 @@ a {
 
 hr {
   color: #333;
+}
+
+/* Individual classes */
+.block {
+  border: 2px solid var(--primary-text-dark);
+}
+
+.light {
+  color: rgb(107, 107, 107);
+}
+
+.vote-block {
+  -ms-word-break: break-all;
+  word-break: break-all;
+
+  /* Non standard for webkit */
+  word-break: break-word;
+
+  -webkit-hyphens: auto;
+  -moz-hyphens: auto;
+  -ms-hyphens: auto;
+  hyphens: auto;
+}
+
+.blockchain svg text,
+.verify-vote svg text,
+.survey svg text {
+  stroke: white;
+}
+
+.blockchain svg circle,
+.verify-vote svg circle,
+.survey svg circle {
+  fill: black;
+}
+
+.verify-vote-button input,
+.survey button {
+  background: linear-gradient(12deg, rgba(49, 224, 131, 1) 0%, rgba(25, 205, 227, 1) 200%);
+  border-radius: 20px;
+  color: white;
+  border: white 5px solid;
+  transition: all 0.4s ease-out;
+}
+
+.verify-vote-button input:hover,
+.survey button:hover {
+  background: linear-gradient(12deg, rgb(42, 185, 109) 0%, rgb(20, 162, 180) 200%);
+  color: white;
+  border-color: var(--primary-bg-light);
 }

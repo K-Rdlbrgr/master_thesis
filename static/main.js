@@ -26,3 +26,7 @@ function copyFunction(id) {
 $('#myModal').on('shown.bs.modal', function() {
   $('#myInput').focus();
 });
+
+if (!document.location.hash) {
+  document.location.hash = 'vote-section';
+}

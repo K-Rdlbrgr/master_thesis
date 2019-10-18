@@ -1,4 +1,5 @@
 import time
+from bitcoin import *
 
 user_db = [{'id': '34638', 'email': '34638@novasbe.pt', 'password': 'mojalaska'},
            {'id': '34646', 'email': '34646@novasbe.pt', 'password': 'mrkremlin'}]

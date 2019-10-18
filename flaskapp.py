@@ -400,7 +400,7 @@ def process():
             
         # Querying the database to find the address of the candidate    
         address_query = f"""SELECT address FROM candidates
-                        WHERE name = 'Mogli'""" #{candidate}
+                        WHERE name = '{candidate}'""" #{candidate}
         
         engine = create_engine('postgresql+psycopg2://postgres:thesis@localhost/master_thesis')
         address_results = engine.execute(address_query)
@@ -531,12 +531,8 @@ def verify():
                                'to_address': vote[5],
                                'value': vote[6],
                                'signature': vote[7]})
-            
-        print(blockchain)
-        print(len(blockchain))
         
         req = request.form
-        print(req)
         
         # Use the private key to generate the corresponding address
         if len(req['private_key']) == 64:
@@ -554,6 +550,14 @@ def verify():
         verify_vote_results = engine.execute(verify_vote_query)
         verify_vote_result = verify_vote_results.first()
         
+        # Query for candidate name
+        candidate_query = f"""SELECT name FROM candidates
+                            WHERE address = '{verify_vote_result[5]}'"""
+        
+        engine = create_engine('postgresql+psycopg2://postgres:thesis@localhost/master_thesis')
+        candidate_results = engine.execute(candidate_query)
+        candidate_result = candidate_results.first()
+        
         # Check if there is an entry for the entered private key:
         if verify_vote_result == None:
             print('There is no corresponding vote to this private key')
@@ -567,8 +571,9 @@ def verify():
                            'timestamp': verify_vote_result[3],
                            'from_address': verify_vote_result[4],
                            'to_address': verify_vote_result[5],
+                           'candidate': candidate_result[0],
                            'value': verify_vote_result[6],
-                           'signature': verify_vote_result[7]}
+                           'signature': verify_vote_result[7],}
             
         return render_template('verify.html', casted_vote=casted_vote)
     else:
