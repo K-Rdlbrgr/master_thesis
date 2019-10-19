@@ -24,18 +24,28 @@
   <body>
     <div class="header text-center mt-5 mb-5">
       <div class="container">
-        <h1>THANK YOU FOR VOTING, IVO!</h1>
+        <h1>THANK YOU FOR VOTING!</h1>
         <h4 class="mt-3">
-          This is the verification page, where you are able to use your voting credentials to verify if your vote has
-          been transmitted and recorded correctly.
+          Welcome to the Verification page. In the following, you are able to verify whether your vote was counted
+          correctly. Please follow the steps.
         </h4>
       </div>
     </div>
 
     <div class="voter-credentials text-center mt-5 mb-5">
       <div class="container">
-        <h2>Your Voting credentials are as follows:</h2>
-        <br />
+        <svg height="100" width="100">
+          <circle cx="50" cy="50" r="30" stroke="" stroke-width="3" fill="white" />
+          <text x="50%" y="50%" text-anchor="middle" stroke="#51c5cf" stroke-width="3px" dy=".35em" font-size="40">
+            1
+          </text>
+        </svg>
+        <h2>COPY YOUR VOTER KEY</h2>
+        <hr />
+        <h6>
+          Since this voting system is running on a blockchain to ensure a transparent and secure election, you can use
+          your voting credentials to check your vote in Step 3. To do so, please copy your Voter Key below.
+        </h6>
         <!-- <div class="inline-block">
       <label class="mr-2 mb-4" for="copy_publicKey">Voter ID</label>
       <input type="text" value="{{ user_publicKey }}" id="copy_publicKey" size="40" />
@@ -47,17 +57,10 @@
       <button type="button" class="btn btn-primary ml-2" onclick="copyFunction('copy_address')">Copy</button>
     </div> -->
         <div class="inline-block">
-          <label class="mr-2 mb-4" for="copy_privateKey"><strong>Voter Key</strong> </label>
+          <label class="mr-2 mb-4" for="copy_privateKey">Voter Key: </label>
           <input type="text" value="{{ user_privateKey }}" id="copy_privateKey" size="40" />
           <button type="button" class="btn btn-primary ml-2" onclick="copyFunction('copy_privateKey')">Copy</button>
         </div>
-        <br />
-
-        <h6 class="text-center">
-          Make sure you copy and save the at least the Voter Key somewhere if you want to check your vote again later
-          on, since this will be the last time they will be displayed. We don't save the credentials in order to provide
-          the anonymity and privacy of every voter.
-        </h6>
       </div>
     </div>
 
@@ -72,18 +75,16 @@
         <svg height="100" width="100">
           <circle cx="50" cy="50" r="30" stroke="" stroke-width="3" fill="white" />
           <text x="50%" y="50%" text-anchor="middle" stroke="#51c5cf" stroke-width="3px" dy=".35em" font-size="40">
-            1
+            2
           </text>
         </svg>
-        <h2>THE BLOCKCHAIN</h2>
+        <h2>THE VOTING BLOCKCHAIN</h2>
         <hr />
         <h6>
-          The Blockchain displayed here contains all the votes casted in the Student Representative Election 2019. The
-          hashes and previouses hashes of each block are connecting each of them, creating a chain of votes which can
-          not be tampered with unnoticeably and ultimately providing a secure and fair election. You can also see the
-          addresses of the voters which you can compare to your own but not the ones of the candidates in order to
-          provide a fair result until the end of the election. To provide another layer of trust the time of the casted
-          vote is also displayed which you can check.
+          The illustration below shows this system’s Blockchain which contains all casted votes in an encrypted and
+          anonymous manner. One block means one vote. To encrypt the vote and make it anonymous, each block includes a
+          hash, which is a security number randomly calculated from the vote’s timestamp and the previous hash (Hash of
+          the previous block). Moreover, you see the encrypted voter address and the chosen candidate.
         </h6>
         <div class="container">
           <div class="row justify-content-center">
@@ -127,14 +128,14 @@
         <svg height="100" width="100">
           <circle cx="50" cy="50" r="30" stroke="" stroke-width="3" fill="white" />
           <text x="50%" y="50%" text-anchor="middle" stroke="#51c5cf" stroke-width="3px" dy=".35em" font-size="40">
-            2
+            3
           </text>
         </svg>
         <h2>VERIFY YOUR VOTE</h2>
         <hr />
         <h6 class="text-center">
-          In order to verify your vote already before and also after the end of the election, just paste your User Key
-          in the following box and hit the Verify Button.
+          In order to see the details of your vote, simply paste your Voter Key in the box below and hit the Verify
+          button!
         </h6>
         <form action="{{ url_for('verify') }}" method="POST" id="verify_form">
           <div class="inline-block mt-3">
@@ -153,19 +154,19 @@
         <svg height="100" width="100">
           <circle cx="50" cy="50" r="30" stroke="" stroke-width="3" fill="white" />
           <text x="50%" y="50%" text-anchor="middle" stroke="#51c5cf" stroke-width="3px" dy=".35em" font-size="40">
-            3
+            4
           </text>
         </svg>
-        <h2>WIN 50€!</h2>
+        <h2>HELP US AND WIN A FREE DINNER</h2>
         <hr />
         <h6 class="text-center">
-          Support our research by filling out the following 90 seconds survey and get into the race of a 50€ voucher for
-          whatever you need.
+          Please support our research by filling out this survey. It takes less than 3 minutes and gives you the chance
+          to win a free dinner at Azure Restaurant on Campus. The winner will be contacted tomorrow. Thank you.
         </h6>
         <div class="mt-3">
           <a href="">
             <button type="button" class="btn btn-lg" data-toggle="" data-target="">
-              Survey Time
+              Survey
             </button>
           </a>
         </div>

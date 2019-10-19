@@ -32,15 +32,13 @@
           </text>
         </svg>
       </div>
-        <h2>THE BLOCKCHAIN</h2>
+        <h2>THE VOTING BLOCKCHAIN</h2>
         <hr />
         <h6>
-          The Blockchain displayed here contains all the votes casted in the Student Representative Election 2019. The
-          hashes and previouses hashes of each block are connecting each of them, creating a chain of votes which can
-          not be tampered with unnoticeably and ultimately providing a secure and fair election. You can also see the
-          addresses of the voters which you can compare to your own but not the ones of the candidates in order to
-          provide a fair result until the end of the election. To provide another layer of trust the time of the casted
-          vote is also displayed which you can check.
+            The illustration below shows this system’s Blockchain which contains all casted votes in an encrypted and
+            anonymous manner. One block means one vote. To encrypt the vote and make it anonymous, each block includes a
+            hash, which is a security number randomly calculated from the vote’s timestamp and the previous hash (Hash of
+            the previous block). Moreover, you see the encrypted voter address and the chosen candidate.
         </h6>
         <div class="blockchain-inner">
           <div class="row justify-content-center" style="margin: auto">
@@ -100,8 +98,8 @@
         <h2>VERIFY YOUR VOTE</h2>
         <hr />
         <h6 class="text-center">
-          In order to verify your vote already before and also after the end of the election, just paste your User Key
-          in the following box and hit the Verify Button.
+            In order to see the details of your vote, simply paste your Voter Key in the box below and hit the Verify
+            button!
         </h6>
         <form action="{{ url_for('verify') }}" method="POST" id="verify_form">
           <div class="inline-block mt-3">
@@ -167,16 +165,16 @@
           </text>
         </svg>
       </div>
-        <h2>WIN 50€!</h2>
+        <h2>HELP US AND WIN A FREE DINNER</h2>
         <hr />
         <h6 class="text-center">
-          Support our research by filling out the following 90 seconds survey and get into the race of a 50€ voucher for
-          whatever you need.
+            Please support our research by filling out this survey. It takes less than 3 minutes and gives you the chance
+            to win a free dinner at Azure Restaurant on Campus. The winner will be contacted tomorrow. Thank you.
         </h6>
         <div class="mt-3">
           <a href="">
             <button type="button" class="btn btn-lg" data-toggle="" data-target="">
-              Survey Time
+              Survey
             </button>
           </a>
         </div>

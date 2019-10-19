@@ -55,13 +55,15 @@ hr {
 
 .blockchain svg text,
 .verify-vote svg text,
-.survey svg text {
+.survey svg text,
+.voter-credentials svg text {
   stroke: white;
 }
 
 .blockchain svg circle,
 .verify-vote svg circle,
-.survey svg circle {
+.survey svg circle,
+.voter-credentials svg circle {
   fill: black;
 }
 
