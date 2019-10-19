@@ -51,6 +51,8 @@ hr {
 /* Individual classes */
 .block {
   border: 2px solid var(--primary-text-dark);
+  padding: 0;
+  margin: 0;
 }
 
 .light {
@@ -70,15 +72,11 @@ hr {
   hyphens: auto;
 }
 
-.blockchain svg text,
-.verify-vote svg text,
-.survey svg text {
+.number svg text {
   stroke: white;
 }
 
-.blockchain svg circle,
-.verify-vote svg circle,
-.survey svg circle {
+.number svg circle {
   fill: black;
 }
 
@@ -96,4 +94,23 @@ hr {
   background: linear-gradient(12deg, rgb(42, 185, 109) 0%, rgb(20, 162, 180) 200%);
   color: white;
   border-color: var(--primary-bg-light);
+}
+
+/* Wrapper, backgrounds, svg */
+.blockchain {
+  background: linear-gradient(12deg, rgba(49, 224, 131, 1) 0%, rgba(25, 205, 227, 1) 100%);
+  color: var(--primary-text-bright);
+  width: 100%;
+  max-height: 930px;
+}
+
+.blockchain-arrow svg {
+  padding-top: 80px;
+  max-height: 500px;
+}
+
+.blockchain-inner {
+  background: white;
+  color: var(--primary-text-dark);
+  width: 100%;
 }
