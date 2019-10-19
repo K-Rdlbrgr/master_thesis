@@ -99,7 +99,7 @@ hr.nova-logo {
   background: linear-gradient(12deg, rgba(49, 224, 131, 1) 0%, rgba(25, 205, 227, 1) 100%);
   color: var(--primary-text-bright);
   width: 100%;
-  max-height: 570px;
+  max-height: 600px;
 }
 
 .select-candidate-wrapper svg {

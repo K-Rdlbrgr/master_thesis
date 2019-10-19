@@ -349,13 +349,40 @@ def voting():
     if request.method == "POST":
         return render_template('voting.html')
     else:
-        user_privateKey = random_key()
-        user_publicKey = privtopub(user_privateKey)
-        user_address = pubtoaddr(user_publicKey)
-        print(user_address)
+        # Information about student will be gathered by using the link
+        voter_id = 34646
         
+        # QUERY for the corresponding election and save that data
+        voter_election_query = f"""SELECT e.election_id, e.name, e.start_time, e.end_time, e.program
+                                FROM elections AS e
+                                INNER JOIN users AS u
+                                ON e.election_id = u.election_id
+                                WHERE user_id = {voter_id}"""
         
-        return render_template('voting.html')
+        engine = create_engine('postgresql+psycopg2://postgres:thesis@localhost/master_thesis')
+        voter_election_results = engine.execute(voter_election_query)
+        voter_election_result = voter_election_results.first()
+        voter_election = {"election_id": voter_election_result[0],
+                          "name": voter_election_result[1],
+                          "start_time": voter_election_result[2],
+                          "end_time": voter_election_result[3],
+                          "program": voter_election_result[4]}
+        
+        # QUERY for the corresponding candidates and save that data
+        election_candidates_query = f"""SELECT name
+                                    FROM candidates
+                                    WHERE election_id = {voter_election['election_id']}"""
+        
+        engine = create_engine('postgresql+psycopg2://postgres:thesis@localhost/master_thesis')
+        election_candidates_results = engine.execute(election_candidates_query)
+        election_candidates = []
+        i = 1
+        for candidate in election_candidates_results:
+            election_candidates.append({"name": candidate[0],
+                                        "number": i})
+            i += 1
+        
+        return render_template('voting.html', election_candidates=election_candidates, voter_election=voter_election)
     
 # Process Page
 

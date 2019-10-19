@@ -64,8 +64,8 @@
     <div class="election-info-wrapper text-center">
       <div class="container">
         <div class="election-info text-center">
-          <h1 class="mb-3">Student Representatives</h1>
-          <h5>- Masters in Finance and International Finance -</h4>
+          <h1 class="mb-3">{{ voter_election['name'] }}</h1>
+          <h5>- {{ voter_election['program'] }} -</h4>
           <hr />
           <h6>Please follow the steps to ensure a smooth voting experience.</h6>
         </div> 
@@ -100,15 +100,17 @@
           <div class="container">
             <div class="candidate-input text-left">
             <form action="{{ url_for('process') }}" method="POST" id="vote_form">
-            <div class="inline-block">
-              <input type="radio" name="candidate" id="candidate_1" value="Andrew" required/><label class="ml-3" for="candidate_1"> Andrew</label>
+              {% for candidate in election_candidates %}
+                <div class="inline-block">
+                  <input type="radio" name="candidate" id="candidate-{{ candidate['number'] }}" value="{{ candidate['name'] }}" required/><label class="ml-3" for="candidate-{{ candidate['number'] }}"> {{ candidate['name'] }}</label>
+                </div>
+              {% endfor %}
+            <!-- <div class="inline-block">
+              <input type="radio" name="candidate" id="candidate_2" value="Ivo" required/><label class="ml-3" for="candidate_2"> Ivo</label>
             </div>
             <div class="inline-block">
-              <input type="radio" name="candidate" id="candidate_2" value="Ivo"/><label class="ml-3" for="candidate_2"> Ivo</label>
-            </div>
-            <div class="inline-block">
-              <input type="radio" name="candidate" id="candidate_3" value="Nina"/><label class="ml-3" for="candidate_3"> Nina</label>
-            </div>
+              <input type="radio" name="candidate" id="candidate_3" value="Nina" required/><label class="ml-3" for="candidate_3"> Nina</label>
+            </div> -->
           </div>
           </div>
         </div> 
