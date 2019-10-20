@@ -91,7 +91,7 @@ hr.nova-logo {
   background: white;
   color: var(--primary-text-dark);
   width: 100%;
-  max-height: 250px;
+  /* max-height: 250px; */
   margin: 40px 0;
 }
 
@@ -99,34 +99,34 @@ hr.nova-logo {
   background: linear-gradient(12deg, rgba(49, 224, 131, 1) 0%, rgba(25, 205, 227, 1) 100%);
   color: var(--primary-text-bright);
   width: 100%;
-  max-height: 600px;
+  /* max-height: 600px; */
 }
 
-.select-candidate-wrapper svg {
+/* .select-candidate-wrapper svg {
   max-height: 500px;
-}
+} */
 
 .submit-vote-wrapper {
   background: white;
   color: var(--primary-text-dark);
   width: 100%;
-  max-height: 400px;
+  /* max-height: 400px; */
 }
 
 .header {
   padding: 80px 0 100px 0;
 }
 
-.election-info {
+/* .election-info {
   padding: 40px 0;
-}
+} */
 
-.select-candidate {
+/* .select-candidate {
   padding: 60px 0;
-}
+} */
 
 .candidate-input {
-  margin: 35px 25% 0 35%;
+  margin-top: 35px;
 }
 
 .submit-vote {
@@ -188,4 +188,57 @@ hr.nova-logo {
 .modal-close {
   position: absolute;
   left: 93%;
+}
+
+/* FLAGS */
+.select-candidate-wrapper #flag {
+  width: 100vw;
+  height: 0px;
+  box-sizing: content-box;
+  padding-bottom: 0px;
+  position: relative;
+  background: transparent;
+  color: white;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.select-candidate-wrapper #flag:after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 0;
+  height: 0;
+  border-top: 48px solid transparent;
+  border-left: 50vw solid white;
+  border-right: 50vw solid white;
+}
+
+#flag-two {
+  width: 100vw;
+  height: 0px;
+  box-sizing: content-box;
+  padding-bottom: 0px;
+  position: relative;
+  background: transparent;
+  color: white;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+#flag-two:after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 0;
+  height: 0;
+  border-top: 48px solid white;
+  border-left: 50vw solid transparent;
+  border-right: 50vw solid transparent;
 }

@@ -22,30 +22,100 @@
   </head>
 
   <body>
-    <div class="blockchain text-center pt-5 pb-5">
+    <!-- Here is where the seperation between Version A and Version B begins -->
+
+    <!-- THIS IS VERSION A -->
+
+    <div class="two-factor text-center pt-5">
       <div class="container">
         <div class="number">
-        <svg height="100" width="100">
-          <circle cx="50" cy="50" r="30" stroke="" stroke-width="3" fill="white" />
-          <text x="50%" y="50%" text-anchor="middle" stroke="#51c5cf" stroke-width="3px" dy=".35em" font-size="40">
-            1
-          </text>
-        </svg>
+          <svg height="100" width="100">
+            <circle cx="50" cy="50" r="30" stroke="" stroke-width="3" fill="white" />
+            <text x="50%" y="50%" text-anchor="middle" stroke="#51c5cf" stroke-width="3px" dy=".35em" font-size="40">
+              1
+            </text>
+          </svg>
+        </div>
+        <h2>TWO FACTOR AUTHENTICATION</h2>
+        <hr />
+        <h6>
+          If you want to enhance the security of your vote, please check the following box to set up two-factor
+          authentification in your Gmail Account. It’s just one click.
+        </h6>
+        <div class="row justify-content-center mt-4">
+          <div class="col-12 col-sm-8 col-md-6 col-lg-4">
+            <div class="two-factor-authentication">
+              <input class="ml-2" type="checkbox" name="authenticator" id="authenticator" value="Yes" /><label
+                class="btn-lg"
+                for="authenticator"
+                >Two Factor Authenticator</label
+              >
+            </div>
+          </div>
+        </div>
       </div>
+      <!-- <div class="blockchain-arrow">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 100" preserveAspectRatio="none">
+            <circle fill="white" cx="10" cy="90" r="115" />
+            <circle fill="white" cx="190" cy="90" r="115" />
+        </div> -->
+      <div class="flag pt-5 mt-5" id="flag"></div>
+    </div>
+
+    <div class="verify-vote text-center mt-5">
+      <div class="container">
+        <div class="number">
+          <svg height="100" width="100">
+            <circle cx="50" cy="50" r="30" stroke="" stroke-width="3" fill="white" />
+            <text x="50%" y="50%" text-anchor="middle" stroke="#51c5cf" stroke-width="3px" dy=".35em" font-size="40">
+              2
+            </text>
+          </svg>
+        </div>
+        <h2>VERIFY YOUR VOTE</h2>
+        <hr />
+        <h6 class="text-center">
+          In order to see the details of your vote, simply paste your Password in the box below and hit the Verify
+          Button!
+        </h6>
+        <form action="{{ url_for('verify') }}" method="POST" id="verify_form">
+          <div class="inline-block mt-3">
+            <label class="mr-3" for="private_key">Password: </label
+            ><input type="text" name="private_key" id="private_key" required />
+          </div>
+          <div class="verify-vote-button text-center mt-2">
+            <input class="btn btn-lg" type="submit" value="Verify Vote" />
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- THIS IS VERSION B -->
+
+    <div class="blockchain text-center pt-5 mt-5">
+      <div class="container">
+        <div class="number">
+          <svg height="100" width="100">
+            <circle cx="50" cy="50" r="30" stroke="" stroke-width="3" fill="white" />
+            <text x="50%" y="50%" text-anchor="middle" stroke="#51c5cf" stroke-width="3px" dy=".35em" font-size="40">
+              1
+            </text>
+          </svg>
+        </div>
         <h2>THE VOTING BLOCKCHAIN</h2>
         <hr />
         <h6>
-            The illustration below shows this system’s Blockchain which contains all casted votes in an encrypted and
-            anonymous manner. One block means one vote. To encrypt the vote and make it anonymous, each block includes a
-            hash, which is a security number randomly calculated from the vote’s timestamp and the previous hash (Hash of
-            the previous block). Moreover, you see the encrypted voter address and the chosen candidate.
+          The illustration below shows this system’s Blockchain which contains all casted votes in an encrypted and
+          anonymous manner. One block means one vote. To encrypt the vote and make it anonymous, each block includes a
+          hash, which is a security number randomly calculated from the vote’s timestamp and the previous hash (Hash of
+          the previous block). Moreover, you see the encrypted voter address and the chosen candidate.
         </h6>
         <div class="blockchain-inner">
           <div class="row justify-content-center" style="margin: auto">
             <div class="col-12">
-            <h2 class="mt-5">HERE WILL THE BLOCKCHAIN BE DISPLAYED</h2>
-            <hr />
-          </div>
+              <h2 class="mt-5">HERE WILL THE BLOCKCHAIN BE DISPLAYED</h2>
+              <hr />
+            </div>
           </div>
           <div class="row justify-content-between" style="margin: auto">
             <div class="col-3 block">
@@ -78,28 +148,29 @@
           </div>
         </div>
       </div>
-      <div class="blockchain-arrow">
+      <!-- <div class="blockchain-arrow">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 100" preserveAspectRatio="none">
           <circle fill="white" cx="10" cy="90" r="115" />
           <circle fill="white" cx="190" cy="90" r="115" />
-      </div>
+      </div> -->
+      <div class="flag pt-5 mt-5" id="flag"></div>
     </div>
 
-    <div class="verify-vote text-center mb-5" id="vote-section">
+    <div class="verify-vote text-center mt-5" id="vote-section">
       <div class="container">
         <div class="number">
-        <svg height="100" width="100">
-          <circle cx="50" cy="50" r="30" stroke="" stroke-width="3" fill="white" />
-          <text x="50%" y="50%" text-anchor="middle" stroke="#51c5cf" stroke-width="3px" dy=".35em" font-size="40">
-            2
-          </text>
-        </svg>
-      </div>
+          <svg height="100" width="100">
+            <circle cx="50" cy="50" r="30" stroke="" stroke-width="3" fill="white" />
+            <text x="50%" y="50%" text-anchor="middle" stroke="#51c5cf" stroke-width="3px" dy=".35em" font-size="40">
+              2
+            </text>
+          </svg>
+        </div>
         <h2>VERIFY YOUR VOTE</h2>
         <hr />
         <h6 class="text-center">
-            In order to see the details of your vote, simply paste your Voter Key in the box below and hit the Verify
-            button!
+          In order to see the details of your vote, simply paste your Voter Key in the box below and hit the Verify
+          button!
         </h6>
         <form action="{{ url_for('verify') }}" method="POST" id="verify_form">
           <div class="inline-block mt-3">
@@ -155,23 +226,26 @@
       </div>
     </div>
 
-    <div class="survey text-center mt-5 mb-5">
+    <!-- HERE THE DIFFERENT VERSION END AGAIN -->
+
+    <div class="survey text-center mt-5 pt-5 pb-5">
+      <div class="flag mb-5" id="flag"></div>
       <div class="container">
         <div class="number">
-        <svg height="100" width="100">
-          <circle cx="50" cy="50" r="30" stroke="" stroke-width="3" fill="white" />
-          <text x="50%" y="50%" text-anchor="middle" stroke="#51c5cf" stroke-width="3px" dy=".35em" font-size="40">
-            3
-          </text>
-        </svg>
-      </div>
+          <svg height="100" width="100">
+            <circle cx="50" cy="50" r="30" stroke="" stroke-width="3" fill="white" />
+            <text x="50%" y="50%" text-anchor="middle" stroke="#51c5cf" stroke-width="3px" dy=".35em" font-size="40">
+              3
+            </text>
+          </svg>
+        </div>
         <h2>HELP US AND WIN A FREE DINNER</h2>
         <hr />
         <h6 class="text-center">
-            Please support our research by filling out this survey. It takes less than 3 minutes and gives you the chance
-            to win a free dinner at Azure Restaurant on Campus. The winner will be contacted tomorrow. Thank you.
+          Please support our research by filling out this survey. It takes less than 3 minutes and gives you the chance
+          to win a free dinner at Azure Restaurant on Campus. The winner will be contacted tomorrow. Thank you.
         </h6>
-        <div class="mt-3">
+        <div class="mt-2">
           <a href="">
             <button type="button" class="btn btn-lg" data-toggle="" data-target="">
               Survey

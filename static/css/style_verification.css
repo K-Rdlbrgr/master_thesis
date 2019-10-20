@@ -49,11 +49,54 @@ hr {
 }
 
 /* Individual Clases */
-.block {
-  border: 2px solid var(--primary-text-dark);
+.header-overlap {
+  background-color: rgba(27, 27, 27, 0.6);
+  height: 80vh;
+  border-top: 8px solid white;
+  border-left: 8px solid white;
+  border-right: 8px solid white;
+  border-bottom: 0px solid white;
 }
 
-.blockchain svg text,
+.nova-logo-header img {
+  /* position: absolute;
+  left: 45px;
+  top: 25px; */
+  width: 80%;
+  margin-left: 15px;
+}
+
+hr.nova-logo {
+  background: white;
+  border: 5px solid white;
+  margin-top: 30px;
+}
+
+.nova-logo-header {
+  height: 100px;
+}
+
+.header-wrapper {
+  background-image: url(/static/img/wallpaper-vote.jpg);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  color: var(--primary-text-bright);
+  width: 100%;
+  height: 80vh;
+}
+
+.header {
+  padding: 80px 0 100px 0;
+}
+
+.block {
+  border: 2px solid var(--primary-text-dark);
+  padding: 0;
+  margin: 0;
+}
+
+/* .blockchain svg text,
 .verify-vote svg text,
 .survey svg text,
 .voter-credentials svg text {
@@ -65,11 +108,19 @@ hr {
 .survey svg circle,
 .voter-credentials svg circle {
   fill: black;
+} */
+
+.number svg text {
+  stroke: white;
+}
+
+.number svg circle {
+  fill: black;
 }
 
 .verify-vote-button input,
-.survey button,
-.voter-credentials button {
+.voter-credentials button,
+.two-factor-authentication {
   background: linear-gradient(12deg, rgba(49, 224, 131, 1) 0%, rgba(25, 205, 227, 1) 200%);
   border-radius: 20px;
   color: white;
@@ -78,9 +129,123 @@ hr {
 }
 
 .verify-vote-button input:hover,
-.survey button:hover,
 .voter-credentials button:hover {
   background: linear-gradient(12deg, rgb(42, 185, 109) 0%, rgb(20, 162, 180) 200%);
   color: white;
   border-color: var(--primary-bg-light);
 }
+
+.survey button {
+  background: white;
+  border-radius: 20px;
+  color: rgba(49, 224, 131, 1);
+  border: white 3px solid;
+  transition: all 0.4s ease-out;
+}
+
+.survey button:hover {
+  background: transparent;
+  color: white;
+  border: white 3px solid;
+}
+
+.two-factor-authentication {
+  background: white;
+  border-radius: 20px;
+  color: rgba(49, 224, 131, 1);
+  border: white 3px solid;
+}
+
+.two-factor-authentication label {
+  margin-bottom: 0 !important;
+  font-size: 18px;
+}
+
+/* Wrapper, backgrounds, svg */
+.two-factor,
+.survey {
+  background: linear-gradient(12deg, rgba(49, 224, 131, 1) 0%, rgba(25, 205, 227, 1) 100%);
+  color: var(--primary-text-bright);
+  width: 100%;
+  /* max-height: 520px; */
+}
+
+.blockchain {
+  background: linear-gradient(12deg, rgba(49, 224, 131, 1) 0%, rgba(25, 205, 227, 1) 100%);
+  color: var(--primary-text-bright);
+  width: 100%;
+  /* max-height: 850px; */
+}
+
+/* .blockchain-arrow svg {
+  padding-top: 80px;
+  max-height: 500px;
+} */
+
+.blockchain-inner {
+  background: white;
+  color: var(--primary-text-dark);
+  width: 100%;
+}
+
+.blockchain #flag,
+.two-factor #flag {
+  width: 100vw;
+  height: 0px;
+  box-sizing: content-box;
+  padding-bottom: 0px;
+  position: relative;
+  background: transparent;
+  color: white;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.blockchain #flag:after,
+.two-factor #flag:after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 0;
+  height: 0;
+  border-top: 48px solid transparent;
+  border-left: 50vw solid white;
+  border-right: 50vw solid white;
+}
+
+#flag,
+#flag-two {
+  width: 100vw;
+  height: 0px;
+  box-sizing: content-box;
+  padding-bottom: 0px;
+  position: relative;
+  background: transparent;
+  color: white;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+#flag:after,
+#flag-two:after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 0;
+  height: 0;
+  border-top: 48px solid white;
+  border-left: 50vw solid transparent;
+  border-right: 50vw solid transparent;
+}
+
+/* @media (max-width: 991px) {
+  .blockchain {
+    max-height: 920px;
+  }
+} */
