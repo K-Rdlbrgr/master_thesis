@@ -124,6 +124,7 @@ class Votes(db.Model):
             
     class version_control(db.Model):
         __tablename__ = 'version_control'
+        version_control_id = db.Column(db.Integer, primary_key=True)
         latest_version = db.Column(db.String(1))
         election_id = db.Column(db.Integer, db.ForeignKey('elections.election_id'))
         
