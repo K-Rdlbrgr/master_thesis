@@ -128,7 +128,8 @@ class Votes(db.Model):
         latest_version = db.Column(db.String(1))
         election_id = db.Column(db.Integer, db.ForeignKey('elections.election_id'))
         
-        def __init__(self, latest_version, election_id):
+        def __init__(self, vesion_control_id, latest_version, election_id):
+            self.version_control_id = version_control_id
             self.latest_version = latest_version
             self.election_id = election_id
 
