@@ -1,4 +1,5 @@
 import time
+import hashlib
 from bitcoin import *
 
 user_db = [{'id': '34638', 'email': '34638@novasbe.pt', 'password': 'mojalaska'},
@@ -65,3 +66,9 @@ def cast_ballot(email, option, election):
 
 
 cast_ballot(email_input, 'Lukas', 1)
+new_hash = sha256(('34638'+'Allagi'))
+print(new_hash)
+new_hash = sha256(('34646'+'Allagi'))
+print(new_hash)
+new_hash = sha256(('34638'+'Allagi'))
+print(new_hash)

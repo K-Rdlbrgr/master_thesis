@@ -62,6 +62,7 @@
     <!-- Here is where the seperation between Version A and Version B begins -->
 
     <!-- THIS IS VERSION A -->
+    {% if version == 'A' %}
 
     <div class="voter-credentials text-center mt-5 mb-5">
       <div class="container">
@@ -146,7 +147,7 @@
           In order to see the details of your vote, simply paste your Password in the box below and hit the Verify
           Button!
         </h6>
-        <form action="{{ url_for('verify') }}" method="POST" id="verify_form">
+        <form action="{{ url_for('verify', source=voter_id_hash) }}" method="POST" id="verify_form">
           <div class="inline-block mt-3">
             <label class="mr-3" for="private_key">Password: </label
             ><input type="text" name="private_key" id="private_key" required />
@@ -159,6 +160,7 @@
     </div>
 
     <!-- THIS IS VERSION B -->
+    {% else %}
 
     <div class="voter-credentials text-center mt-5 mb-5">
       <div class="container">
@@ -282,6 +284,8 @@
         </form>
       </div>
     </div>
+
+    {% endif %}
 
     <!-- HERE THE DIFFERENT VERSION END AGAIN -->
 

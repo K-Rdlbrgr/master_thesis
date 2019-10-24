@@ -1,4 +1,5 @@
-from flask import Flask, render_template, request, url_for, redirect, flash
+from flask import Flask, render_template, request, url_for, redirect, flash, session
+from flask_session import Session
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import *
 from bitcoin import *
@@ -7,8 +8,15 @@ import hashlib
 import time
 import datetime
 
+
+# Initializing Flaskapp
 app = Flask(__name__)
 app.secret_key = b'\xa3\x14\xa1B]\x8a\xda\xd3\xbf\xbf\x03E{\x1aYx'
+
+# Setting up the Session
+SESSION_TYPE = 'redis'
+app.config.from_object(__name__)
+Session(app)
 
 # We introduce the ENV variable to quickly switch on and off debug mode depending on if we just want to develop the app or deploy and use it. It also sets the connection to our postgres database
 
@@ -289,6 +297,12 @@ def isValid(vote, pubkey):
 
         return ecdsa_verify(calculateHash(vote), vote['signature'], pubkey)
 
+# Link generation for the users
+# 1. Get all user_ids from the users table in the database and store them
+# 2. Loop through all the user_ids and use sha256 to encrypt it
+# 3. Add the encryption to the general link www.herokuaddress.io/voting/?source= the hashed user_id
+# 4. We store the link in the vote_check table in the database where we can also access it to give communications the links
+
 # Before implementing an SQL database (preferably using PostreSQL) we determine some example users, elections and an empty votes list where we store all the casted votes inside. All of the current attributes are just the starting point. We can add some more later on like hashing, timestamps, time limits for the elections and so on.
 
 user_db = [{'id': '34638', 'email': '34638@novasbe.pt', 'password': 'kevin'},
@@ -348,9 +362,29 @@ def elections():
 def voting():
     if request.method == "POST":
         return render_template('voting.html')
-    else:
+    # else:
+    if request.method == "GET":
+        
+        # Translate Hash of link into student id
+        args = request.args.to_dict()
+        voter_id_hash = args['source']
+        
+        voter_id_hash_query = f"""SELECT user_id
+                                FROM vote_check
+                                WHERE link = '{voter_id_hash}'"""
+        
+        engine = create_engine('postgresql+psycopg2://postgres:thesis@localhost/master_thesis')
+        voter_id_hash_results = engine.execute(voter_id_hash_query)
+        voter_id_hash_result = voter_id_hash_results.first()
+        voter_id = voter_id_hash_result[0]
+        
+        # Initialize the Session User_ID and Voter_ID_Hash
+        session['voter_id'] = voter_id
+        session['voter_id_hash'] = voter_id_hash
+        
         # Information about student will be gathered by using the link
-        voter_id = 34646
+        # USE SESSIONS TO PASS VALUES LIKE KEYS AND 
+        # voter_id = 34646
         
         # QUERY for the corresponding election and save that data
         voter_election_query = f"""SELECT e.election_id, e.name, e.start_time, e.end_time, e.program
@@ -393,16 +427,19 @@ def process():
     
     # ADD the correct lines of code to get the url or the embedded data (probably user_id/user e-mail and election_id) and save it to a variable
     # For now
-    user_link = 'personalized_link'
+    # user_link = 'personalized_link'
+    voter_id = session['voter_id']
+    print(f'Process is using the user id: {voter_id}')
     
     # QUERY to check if this variable corresponding to the already_voted boolean in the vote_check table of the link the user used. If it's false, proceed. If it's true, render the error of not able to vote twice
     already_voted_query = f"""SELECT already_voted FROM vote_check
-                            WHERE link = '{user_link}'"""
+                            WHERE user_id = '{voter_id}'"""
                     
     engine = create_engine('postgresql+psycopg2://postgres:thesis@localhost/master_thesis')
     already_voted_results = engine.execute(already_voted_query)
     for r in already_voted_results:
         already_voted = r[0]
+        print(already_voted)
     
     if request.method == "POST" and already_voted == False:
         
@@ -488,13 +525,55 @@ def process():
             
             # Add QUERY to switch boolean of already_voted in the vote_check table from False to True 
             update_already_voted_query = f"""UPDATE vote_check
-                                        SET already_voted = True
-                                        WHERE link = '{user_link}'"""
+                                             SET already_voted = True
+                                             WHERE user_id = {voter_id}"""
                     
             engine = create_engine('postgresql+psycopg2://postgres:thesis@localhost/master_thesis')
             engine.execute(update_already_voted_query)
             print('The already_voted status got updated')
+            
+            # Check which version was the last version
+            latest_version_query = f"""SELECT latest_version
+                                       FROM version_control as v
+                                       INNER JOIN users as u
+                                       ON v.election_id = u.election_id
+                                       WHERE user_id = {voter_id}"""
+                    
+            engine = create_engine('postgresql+psycopg2://postgres:thesis@localhost/master_thesis')
+            latest_version_results = engine.execute(latest_version_query)
+            latest_version_result = latest_version_results.first()
+            latest_version = latest_version_result[0]
+            
+            # Select the version the voter gets displayed based on the last version
+            if latest_version == 'A':
+                voter_version = 'B'
+                session['voter_version']=voter_version
+            else:
+                voter_version = 'A'
+                session['voter_version']=voter_version
+            
+            print(session['voter_version'])
+            
+            # Update the database
+            update_latest_version_query = f"""UPDATE version_control
+                                              SET latest_version = '{voter_version}'
+                                              FROM version_control AS v
+                                              INNER JOIN users AS u
+                                              ON v.election_id = u.election_id
+                                              WHERE user_id = {voter_id}"""
                   
+            engine = create_engine('postgresql+psycopg2://postgres:thesis@localhost/master_thesis')
+            engine.execute(update_latest_version_query)
+            print('The latest_version status got updated')
+            
+            # Update the used version for the voter in the database
+            update_version_query = f"""UPDATE vote_check
+                                       SET version = '{voter_version}'
+                                       WHERE user_id = {voter_id}"""
+                    
+            engine = create_engine('postgresql+psycopg2://postgres:thesis@localhost/master_thesis')
+            update_version_results = engine.execute(update_version_query)
+                
         return redirect(url_for('verification', user_address=user_address, user_publicKey=user_publicKey, user_privateKey=user_privateKey))
     
     else:
@@ -505,6 +584,12 @@ def process():
 
 @app.route('/verification/<user_address>/<user_publicKey>/<user_privateKey>', methods=["GET", "POST"])
 def verification(user_address, user_publicKey, user_privateKey):
+    # Get the version and voter_id_hash information from the session
+    voter_id_hash = session['voter_id_hash']
+    print(f'We are n the Verification Page and the voter_id_hash is {voter_id_hash}')
+    version = session['voter_version']
+    print(f'We are n the Verification Page and the version is {version}')
+    
     if request.method == "GET":
         # Get the user credentials from the process.html
         user_address = user_address
@@ -533,12 +618,47 @@ def verification(user_address, user_publicKey, user_privateKey):
         print(blockchain)
         print(len(blockchain))
         
-        return render_template('verification.html',user_address=user_address, user_publicKey=user_publicKey, user_privateKey=user_privateKey)
+        return render_template('verification.html',user_address=user_address, user_publicKey=user_publicKey, user_privateKey=user_privateKey, voter_id_hash=voter_id_hash, version=version)
     else:
-        return render_template('verification.html')
+        return render_template('verification.html', version=version)
     
 @app.route('/verify/', methods=["GET", "POST"])
 def verify():
+    if session['voter_version'] == None:
+        
+        # Translate Hash of link into student id
+        args = request.args.to_dict()
+        voter_id_hash = args['source']
+            
+        voter_id_hash_query = f"""SELECT user_id
+                                FROM vote_check
+                                WHERE link = '{voter_id_hash}'"""
+        
+        engine = create_engine('postgresql+psycopg2://postgres:thesis@localhost/master_thesis')
+        voter_id_hash_results = engine.execute(voter_id_hash_query)
+        voter_id_hash_result = voter_id_hash_results.first()
+        voter_id = voter_id_hash_result[0]
+        
+        # Query the corresponding version to render
+        version_control_query = f"""SELECT version
+                                    FROM vote_check
+                                    WHERE user_id = {voter_id}"""
+                
+        engine = create_engine('postgresql+psycopg2://postgres:thesis@localhost/master_thesis')
+        version_control_results = engine.execute(version_control_query)
+        version_control_result = version_control_results.first()
+        version = version_control_result[0]
+        
+        # Initialize the Session User ID and Version
+        session['voter_id'] = voter_id
+        session['voter_version'] = version
+        
+        print(f'We are n the Verify Page and the version is {version}')
+        print(f'We are n the Verify Page and the voter_id is {voter_id}')
+        
+    else:
+        version = session['voter_version']
+        
     if request.method == "POST":
         # Create empty list for Blockchain which will result in a list of dictionaries
         blockchain = []
@@ -589,7 +709,7 @@ def verify():
         if verify_vote_result == None:
             print('There is no corresponding vote to this private key')
             flash('There is no corresponding vote to this private key', 'wrong_private_key_fail')
-            return render_template('verify.html')            
+            return render_template('verify.html', version=version)            
         else:
             # Create a dictionary with the found transaction:
             casted_vote = {'hash': verify_vote_result[0],
@@ -602,7 +722,7 @@ def verify():
                            'value': verify_vote_result[6],
                            'signature': verify_vote_result[7],}
             
-        return render_template('verify.html', casted_vote=casted_vote)
+        return render_template('verify.html', casted_vote=casted_vote, version=version)
     else:
         # Create empty list for Blockchain which will result in a list of dictionaries
         blockchain = []
@@ -626,7 +746,7 @@ def verify():
         print(blockchain)
         print(len(blockchain))
         
-        return render_template('verify.html')
+        return render_template('verify.html', version=version)
 
 # FUNCTIONS
 

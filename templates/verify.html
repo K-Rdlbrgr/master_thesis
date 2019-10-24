@@ -25,6 +25,7 @@
     <!-- Here is where the seperation between Version A and Version B begins -->
 
     <!-- THIS IS VERSION A -->
+    {% if version == 'A' %}
 
     <div class="two-factor text-center pt-5">
       <div class="container">
@@ -87,10 +88,43 @@
             <input class="btn btn-lg" type="submit" value="Verify Vote" />
           </div>
         </form>
+
+        <!-- This is the flash messages which is triggered when some user is trying to cast a ballot twice -->
+        {% with messages = get_flashed_messages(category_filter=["no_private_key_fail"]) %} {% if messages %} {%- for
+        message in messages %}
+        <div class="alert alert-danger alert-dismissible fade show mt-2" role="alert">
+          <span>{{ message }}</span>
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        {% endfor -%} {% endif %} {% endwith %}
+        <!-- This is the flash messages which is triggered when some user is trying to cast a ballot twice -->
+        {% with messages = get_flashed_messages(category_filter=["wrong_private_key_fail"]) %} {% if messages %} {%- for
+        message in messages %}
+        <div class="alert alert-danger alert-dismissible fade show mt-2" role="alert">
+          <span>{{ message }}</span>
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        {% endfor -%} {% endif %} {% endwith %} {% if casted_vote != null %}
+        <div class="row mt-5 justify-content-center inline-block">
+          <div class="col-md-6 block vote-block">
+            <h4 class="mt-3"><strong>Your Vote</strong></h4>
+            <hr />
+            <h6 class="mb-1"><strong>Candidate:</strong></h6>
+            <h6 class="mb-3">{{ casted_vote['candidate'] }}</h6>
+            <h6 class="mb-1"><strong>Timestamp:</strong></h6>
+            <h6 class="mb-3">{{ casted_vote['timestamp'] }}</h6>
+          </div>
+        </div>
+        {% endif %}
       </div>
     </div>
 
     <!-- THIS IS VERSION B -->
+    {% else %}
 
     <div class="blockchain text-center pt-5 mt-5">
       <div class="container">
@@ -226,6 +260,7 @@
       </div>
     </div>
 
+    {% endif %}
     <!-- HERE THE DIFFERENT VERSION END AGAIN -->
 
     <div class="survey text-center mt-5 pt-5 pb-5">
