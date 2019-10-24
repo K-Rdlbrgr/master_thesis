@@ -273,7 +273,7 @@
           In order to see the details of your vote, simply paste your Voter Key in the box below and hit the Verify
           Button!
         </h6>
-        <form action="{{ url_for('verify') }}" method="POST" id="verify_form">
+        <form action="{{ url_for('verify', source=voter_id_hash) }}" method="POST" id="verify_form">
           <div class="inline-block mt-3">
             <label class="mr-3" for="private_key">Voter Key: </label
             ><input type="text" name="private_key" id="private_key" required />
