@@ -41,13 +41,11 @@ class Users(db.Model):
     user_id = db.Column(db.Integer, primary_key=True)
     election_id = db.Column(db.Integer, db.ForeignKey('elections.election_id'))
     email = db.Column(db.String(16), unique=True)
-    password = db.Column(db.String(64))
 
     def __init__(self, user_id, election_id, email, password):
         self.user_id = user_id
         self.election_id = election_id
         self.email = email
-        self.password = password
 
 
 class Elections(db.Model):
@@ -56,7 +54,7 @@ class Elections(db.Model):
     name = db.Column(db.String(200))
     start_time = db.Column(db.TIMESTAMP)
     end_time = db.Column(db.TIMESTAMP)
-    program = db.Column(db.String(50))
+    program = db.Column(db.String(200))
 
     def __init__(self, election_id, name, start_time, end_time, program):
         self.election_id = election_id
@@ -73,7 +71,7 @@ class Candidates(db.Model):
         db.Integer, db.ForeignKey('elections.election_id'))
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
     name = db.Column(db.String(100))
-    program = db.Column(db.String(50))
+    program = db.Column(db.String(200))
     address = db.Column(db.String(34), unique=True)
 
     def __init__(self, candidate_id, election_id, user_id, name, program, address):
@@ -94,8 +92,9 @@ class Votes(db.Model):
     from_address = db.Column(db.String(300))
     to_address = db.Column(db.String(300))
     value = db.Column(db.Integer)
+    signature = db.Column(db.String(88))
 
-    def __init__(self, hash, previous_hash, nonce, timestamp, from_address, to_address, value):
+    def __init__(self, hash, previous_hash, nonce, timestamp, from_address, to_address, value, signature):
         self.hash = hash
         self.previous_hash = previous_hash
         self.nonce = nonce
@@ -103,6 +102,7 @@ class Votes(db.Model):
         self.from_address = from_address
         self.to_address = to_address
         self.value = 1
+        self.signature = signature
         
     # Proposed Solution for Double Spending
     class vote_check(db.Model):
@@ -112,13 +112,24 @@ class Votes(db.Model):
         election_id = db.Column(db.Integer, db.ForeignKey('elections.election_id'))
         link = db.Column(db.String(300), unique=True)
         already_voted = db.Column(db.Boolean)
+        version = db.Column(db.String(1))
         
-        def __init__(self, vote_check_id, user_id, election_id, link, already_voted):
+        def __init__(self, vote_check_id, user_id, election_id, link, already_voted, version):
             self.vote_check_id = vote_check_id
             self.user_id = user_id
             self.election_id = election_id
             self.link = link
             self.already_voted = False
+            self.version = version
+            
+    class version_control(db.Model):
+        __tablename__ = 'version_control'
+        latest_version = db.Column(db.String(1))
+        election_id = db.Column(db.Integer, db.ForeignKey('elections.election_id'))
+        
+        def __init__(self, latest_version, election_id):
+            self.latest_version = latest_version
+            self.election_id = election_id
 
 # Now we establish the classes which we need for creating the Blockchain. First, we need the Transaction class which corresponds to one vote and one block on the chain. Then we construct the Blockchain class connecting all those transactions. Every functions we need to interact with the Blockchain is already implemented as methods in the classes.
 
