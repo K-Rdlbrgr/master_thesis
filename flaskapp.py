@@ -618,20 +618,34 @@ def verification(user_address, user_publicKey, user_privateKey):
         blockchain_results = engine.execute(blockchain_query)
         
         # Adding one block to the blockchain for every vote
+        counter = 0
+        color_counter = 0
+        previous_color_counter = 7
+        colors = ['goldenrod', 'violet', 'lawngreen', 'yellow', 'magenta', 'palegreen', 'orangered', 'cyan']
+        
         for vote in blockchain_results:
-            blockchain.append({'hash': vote[0],
+            counter += 1
+            if color_counter > 7:
+                color_counter = 0
+            if previous_color_counter > 7:
+                previous_color_counter = 0
+                
+            blockchain.append({'block_number': counter,
+                               'hash': vote[0],
                                'previous_hash': vote[1],
                                'nonce': vote[2],
                                'timestamp': vote[3],
                                'from_address': vote[4],
                                'to_address': vote[5],
                                'value': vote[6],
-                               'signature': vote[7]})
+                               'signature': vote[7],
+                               'color': colors[color_counter],
+                               'previous_color': colors[previous_color_counter]})
             
-        print(blockchain)
-        print(len(blockchain))
+            color_counter += 1
+            previous_color_counter += 1
         
-        return render_template('verification.html',user_address=user_address, user_publicKey=user_publicKey, user_privateKey=user_privateKey, voter_id_hash=voter_id_hash, version=version)
+        return render_template('verification.html',user_address=user_address, user_publicKey=user_publicKey, user_privateKey=user_privateKey, voter_id_hash=voter_id_hash, version=version, blockchain=blockchain)
     else:
         return render_template('verification.html', version=version)
     
@@ -682,15 +696,32 @@ def verify():
         blockchain_results = engine.execute(blockchain_query)
         
         # Adding one block to the blockchain for every vote
+        counter = 0
+        color_counter = 0
+        previous_color_counter = 7
+        colors = ['goldenrod', 'violet', 'lawngreen', 'yellow', 'magenta', 'palegreen', 'orangered', 'cyan']
+        
         for vote in blockchain_results:
-            blockchain.append({'hash': vote[0],
+            counter += 1
+            if color_counter > 7:
+                color_counter = 0
+            if previous_color_counter > 7:
+                previous_color_counter = 0
+                
+            blockchain.append({'block_number': counter,
+                               'hash': vote[0],
                                'previous_hash': vote[1],
                                'nonce': vote[2],
                                'timestamp': vote[3],
                                'from_address': vote[4],
                                'to_address': vote[5],
                                'value': vote[6],
-                               'signature': vote[7]})
+                               'signature': vote[7],
+                               'color': colors[color_counter],
+                               'previous_color': colors[previous_color_counter]})
+            
+            color_counter += 1
+            previous_color_counter += 1
         
         req = request.form
         
@@ -735,7 +766,7 @@ def verify():
                            'value': verify_vote_result[6],
                            'signature': verify_vote_result[7],}
             
-        return render_template('verify.html', casted_vote=casted_vote, version=version)
+        return render_template('verify.html', casted_vote=casted_vote, version=version, blockchain=blockchain)
     else:
         # Create empty list for Blockchain which will result in a list of dictionaries
         blockchain = []
@@ -746,20 +777,34 @@ def verify():
         blockchain_results = engine.execute(blockchain_query)
         
         # Adding one block to the blockchain for every vote
+        counter = 0
+        color_counter = 0
+        previous_color_counter = 7
+        colors = ['goldenrod', 'violet', 'lawngreen', 'yellow', 'magenta', 'palegreen', 'orangered', 'cyan']
+        
         for vote in blockchain_results:
-            blockchain.append({'hash': vote[0],
+            counter += 1
+            if color_counter > 7:
+                color_counter = 0
+            if previous_color_counter > 7:
+                previous_color_counter = 0
+                
+            blockchain.append({'block_number': counter,
+                               'hash': vote[0],
                                'previous_hash': vote[1],
                                'nonce': vote[2],
                                'timestamp': vote[3],
                                'from_address': vote[4],
                                'to_address': vote[5],
                                'value': vote[6],
-                               'signature': vote[7]})
+                               'signature': vote[7],
+                               'color': colors[color_counter],
+                               'previous_color': colors[previous_color_counter]})
             
-        print(blockchain)
-        print(len(blockchain))
+            color_counter += 1
+            previous_color_counter += 1
         
-        return render_template('verify.html', version=version)
+        return render_template('verify.html', version=version, blockchain=blockchain)
 
 # FUNCTIONS
 

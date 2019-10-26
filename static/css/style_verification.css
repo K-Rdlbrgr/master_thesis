@@ -183,8 +183,8 @@ hr.nova-logo {
 } */
 
 .blockchain-inner {
-  background: white;
-  color: var(--primary-text-dark);
+  background: transparent;
+  color: var(--primary-text-bright);
   width: 100%;
 }
 
@@ -249,3 +249,55 @@ hr.nova-logo {
     max-height: 920px;
   }
 } */
+
+/* Blockchain Viewer */
+.scrolling-wrapper-flexbox {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.card {
+  background: rgba(27, 27, 27, 0.8);
+  flex: 0 0 auto;
+  max-width: 20vw;
+  margin: 0 10px;
+  min-height: 20vh;
+}
+
+.card li {
+  background: rgba(27, 27, 27, 0.2);
+}
+
+.block-info {
+  color: white;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+@media (max-width: 1300px) {
+  .card {
+    max-width: 30vw;
+  }
+}
+@media (max-width: 1000px) {
+  .card {
+    max-width: 40vw;
+  }
+}
+@media (max-width: 850px) {
+  .card {
+    max-width: 50vw;
+  }
+}
+@media (max-width: 650px) {
+  .card {
+    max-width: 65vw;
+  }
+}
+@media (max-width: 500px) {
+  .card {
+    max-width: 80vw;
+  }
+}

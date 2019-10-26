@@ -110,14 +110,40 @@
         </div>
         {% endfor -%} {% endif %} {% endwith %} {% if casted_vote != null %}
         <div class="row mt-5 justify-content-center inline-block">
-          <div class="col-md-6 block vote-block">
+            <div class="col-lg-8 col-md-10 col-12 block">
+                <div class="card text-left">
+                  <div class="card-body">
+                    <h5 class="card-title">
+                      <strong>Your Vote</strong>
+                    </h5>
+                    <ul class="list-group list-group-flush">
+                      <li class="list-group-item">
+                        <span class="block-info">Candidate's Name</span>
+                        <br />
+                        <div class="text-truncate">
+                          <small>{{ casted_vote['candidate'] }}</small><br />
+                        </div>
+                      </li>
+    
+                      <li class="list-group-item">
+                        <span class="block-info">Timestamp</span>
+                        <br />
+                        <div class="text-truncate">
+                          <small>{{ casted_vote['timestamp'] }}</small>
+                        </div>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+          <!-- <div class="col-md-6 block vote-block">
             <h4 class="mt-3"><strong>Your Vote</strong></h4>
             <hr />
             <h6 class="mb-1"><strong>Candidate:</strong></h6>
             <h6 class="mb-3">{{ casted_vote['candidate'] }}</h6>
             <h6 class="mb-1"><strong>Timestamp:</strong></h6>
             <h6 class="mb-3">{{ casted_vote['timestamp'] }}</h6>
-          </div>
+          </div> -->
         </div>
         {% endif %}
       </div>
@@ -172,13 +198,67 @@
           the previous block). Moreover, you see the encrypted voter address and the chosen candidate.
         </h6>
         <div class="blockchain-inner">
-          <div class="row justify-content-center" style="margin: auto">
+          <!-- <div class="row justify-content-center" style="margin: auto">
             <div class="col-12">
               <h2 class="mt-5">HERE WILL THE BLOCKCHAIN BE DISPLAYED</h2>
               <hr />
             </div>
+          </div> -->
+          <div class="row text-left mt-5">
+            <div class="col-12">
+              <div class="scrolling-wrapper-flexbox">
+                {% for block in blockchain %}
+                <div class="card">
+                  <div class="card-body">
+                    <h5 class="card-title">
+                      <strong> Vote {{ block['block_number'] }}</strong> {% if block['block_number'] == 1 %}
+                      <small class="">(Genesis block)</small>
+                      {% endif %}
+                    </h5>
+                  </div>
+                  <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                      <span class="block-info">Hash</span>
+                      <br />
+                      <div class="text-truncate" style="color:{{ block['color'] }}">
+                        <small>{{ block['hash'] }}</small>
+                      </div>
+
+                      <br />
+                      <span class="block-info">Hash of Previous Block</span>
+                      <br />
+
+                      {% if block['block_number'] == 1 %}
+                      <div class="text-truncate" style="color:white">
+                        <small>{{ block['previous_hash'] }}</small>
+                      </div>
+                      {% else %}
+                      <div class="text-truncate" style="color:{{ block['previous_color'] }}">
+                        <small>{{ block['previous_hash'] }}</small>
+                      </div>
+                      {% endif %}
+                    </li>
+
+                    <li class="list-group-item">
+                      <span class="block-info">From Address</span><br />
+                      <div class="text-truncate">
+                        <small>{{ block['from_address'] }}</small>
+                      </div>
+                    </li>
+
+                    <li class="list-group-item">
+                      <span class="block-info">Timestamp</span><br />
+                      <div class="text-truncate">
+                        <small>{{ block['timestamp'] }}</small>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+                {% endfor %}
+              </div>
+            </div>
           </div>
-          <div class="row justify-content-between" style="margin: auto">
+          <!-- <div class="row justify-content-between" style="margin: auto">
             <div class="col-3 block">
               <h4 class="mt-3">Block 1</h4>
               <hr />
@@ -206,7 +286,7 @@
               <h6>To Address = ?</h6>
               <h6>Timestamp</h6>
             </div>
-          </div>
+          </div> -->
         </div>
       </div>
       <!-- <div class="blockchain-arrow">
@@ -263,24 +343,83 @@
           </button>
         </div>
         {% endfor -%} {% endif %} {% endwith %} {% if casted_vote != null %}
-        <div class="row mt-5 justify-content-center inline-block">
-          <div class="col-md-6 block vote-block">
-            <h4 class="mt-3"><strong>Your Vote</strong></h4>
-            <hr />
-            <h6 class="mb-1"><strong>Hash</strong></h6>
-            <h6 class="mb-3">{{ casted_vote['hash'] }}</h6>
-            <h6 class="mb-1"><strong>Previous Hash:</strong></h6>
-            <h6 class="mb-3">{{ casted_vote['previous_hash'] }}</h6>
-            <h6 class="mb-1"><strong>From Address:</strong></h6>
-            <h6 class="mb-1">{{ casted_vote['from_address'] }}</h6>
-            <h6 class="light mb-3">(That's yours)</h6>
-            <h6 class="mb-1"><strong>To Address:</strong></h6>
-            <h6 class="mb-1">{{ casted_vote['to_address'] }}</h6>
-            <h6 class="light mb-3">
-              Candidate's Name: <strong>{{ casted_vote['candidate'] }}</strong>
-            </h6>
-            <h6 class="mb-1"><strong>Timestamp:</strong></h6>
-            <h6 class="mb-3">{{ casted_vote['timestamp'] }}</h6>
+        <div class="row mt-5 justify-content-center vote-block">
+          <div class="col-lg-8 col-md-10 col-12 block">
+            <div class="card text-left">
+              <div class="card-body">
+                <h5 class="card-title">
+                  <strong
+                    >Your Vote {% set color = {'color':'random'} %} {% set previous_color = {'color': 'random'} %} {%
+                    for block in blockchain %} {% if casted_vote['from_address'] == block['from_address'] %} (#{{
+                      block['block_number']
+                    }}) {% if color.update({'color': block['color']}) %} {% endif %} {% if
+                    previous_color.update({'color': block['previous_color']}) %} {% endif %} {% endif %} {% endfor %}
+                  </strong>
+                </h5>
+                <ul class="list-group list-group-flush">
+                  <li class="list-group-item">
+                    <span class="block-info">Hash</span>
+                    <br />
+                    <div class="text-truncate">
+                      <small style="color:{{ color['color'] }}">{{ casted_vote['hash'] }}</small>
+                    </div>
+                    <br />
+                    <span class="block-info">Hash of Previous Block</span>
+                    <br />
+                    <div class="text-truncate">
+                      <small style="color:{{ previous_color['color'] }}">{{ casted_vote['previous_hash'] }}</small>
+                    </div>
+                  </li>
+
+                  <li class="list-group-item">
+                    <span class="block-info">From Address <small>(That's Yours!)</small></span>
+                    <br />
+                    <div class="text-truncate">
+                      <small>{{ casted_vote['from_address'] }}</small
+                      >
+                    </div>
+                  </li>
+
+                  <li class="list-group-item">
+                    <span class="block-info">To Address <small>(Your Candidate!)</small></span>
+                    <br />
+                    <div class="text-truncate">
+                      <small>{{ casted_vote['to_address'] }}</small><br />
+                    </div>
+                    <br>
+                    <span class="block-info">Candidate's Name</span>
+                    <br />
+                    <div class="text-truncate">
+                      <small>{{ casted_vote['candidate'] }}</small><br />
+                    </div>
+                  </li>
+
+                  <li class="list-group-item">
+                    <span class="block-info">Timestamp</span>
+                    <br />
+                    <div class="text-truncate">
+                      <small>{{ casted_vote['timestamp'] }}</small>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <!-- <h4 class="mt-3"><strong>Your Vote</strong></h4>
+              <hr />
+              <h6 class="mb-1"><strong>Hash</strong></h6>
+              <h6 class="mb-3">{{ casted_vote['hash'] }}</h6>
+              <h6 class="mb-1"><strong>Previous Hash:</strong></h6>
+              <h6 class="mb-3">{{ casted_vote['previous_hash'] }}</h6>
+              <h6 class="mb-1"><strong>From Address:</strong></h6>
+              <h6 class="mb-1">{{ casted_vote['from_address'] }}</h6>
+              <h6 class="light mb-3">(That's yours)</h6>
+              <h6 class="mb-1"><strong>To Address:</strong></h6>
+              <h6 class="mb-1">{{ casted_vote['to_address'] }}</h6>
+              <h6 class="light mb-3">
+                Candidate's Name: <strong>{{ casted_vote['candidate'] }}</strong>
+              </h6>
+              <h6 class="mb-1"><strong>Timestamp:</strong></h6>
+              <h6 class="mb-3">{{ casted_vote['timestamp'] }}</h6> -->
           </div>
         </div>
         {% endif %}
@@ -317,7 +456,6 @@
     {% endif %}
     <!-- HERE THE DIFFERENT VERSION END AGAIN -->
 
-    
     <!-- BOOTSTRAP SCRIPTS -->
     <!-- More necessary scripts in order to use bootstrap on the website -->
     <script

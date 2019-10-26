@@ -49,11 +49,11 @@ hr {
 }
 
 /* Individual classes */
-.block {
+/* .block {
   border: 2px solid var(--primary-text-dark);
   padding: 0;
   margin: 0;
-}
+} */
 
 .light {
   color: rgb(107, 107, 107);
@@ -70,6 +70,8 @@ hr {
   -moz-hyphens: auto;
   -ms-hyphens: auto;
   hyphens: auto;
+
+  max-width: 100vw;
 }
 
 .number svg text {
@@ -142,8 +144,8 @@ hr {
 } */
 
 .blockchain-inner {
-  background: white;
-  color: var(--primary-text-dark);
+  background: transparent;
+  color: var(--primary-text-bright);
   width: 100%;
 }
 
@@ -206,3 +208,77 @@ hr {
     max-height: 920px;
   }
 } */
+
+/* Blockchain Viewer */
+.scrolling-wrapper-flexbox {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.scrolling-wrapper-flexbox .card {
+  background: rgba(27, 27, 27, 0.8);
+  flex: 0 0 auto;
+  max-width: 20vw;
+  margin: 0 10px;
+  min-height: 20vh;
+}
+
+.scrolling-wrapper-flexbox .card li {
+  background: rgba(27, 27, 27, 0.2);
+}
+
+.block-info {
+  color: white;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+@media (max-width: 1300px) {
+  .scrolling-wrapper-flexbox .card {
+    max-width: 30vw;
+  }
+}
+@media (max-width: 1000px) {
+  .scrolling-wrapper-flexbox .card {
+    max-width: 40vw;
+  }
+}
+@media (max-width: 850px) {
+  .scrolling-wrapper-flexbox .card {
+    max-width: 50vw;
+  }
+}
+@media (max-width: 650px) {
+  .scrolling-wrapper-flexbox .card {
+    max-width: 65vw;
+  }
+}
+@media (max-width: 500px) {
+  .scrolling-wrapper-flexbox .card {
+    max-width: 80vw;
+  }
+}
+
+/* Verify Vote Viewer */
+.block .card {
+  background: rgba(27, 27, 27, 0.8);
+  margin: 0 10px;
+  color: var(--primary-text-bright);
+  padding: 0;
+  border: 2px solid rgba(49, 224, 131, 1);
+  max-width: 100vw;
+}
+
+.block .card .card-body {
+  padding: 1.25rem 0 0 0;
+}
+
+.block .card .card-title {
+  padding: 0 1em;
+}
+
+.block .card li {
+  background: rgba(27, 27, 27, 0.2);
+}
