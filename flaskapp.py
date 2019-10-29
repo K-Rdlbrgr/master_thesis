@@ -50,6 +50,9 @@ client = WebApplicationClient(GOOGLE_CLIENT_ID)
 def load_user(user_id):
     return User.get(user_id)
 
+# Set Flask Login-Manager Login-View
+login_manager.login_view = "login"
+
 # We introduce the ENV variable to quickly switch on and off debug mode depending on if we just want to develop the app or deploy and use it. It also sets the connection to our postgres database
 
 ENV = 'dev'
@@ -535,6 +538,8 @@ def logout():
 @app.route('/voting/', methods=["GET", "POST"])
 @login_required
 def voting():
+    if request.referrer == None:
+        return redirect(url_for("login"))
     if request.method == "GET":
         
         # Translate Hash of link into student id
