@@ -36,7 +36,7 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 
 # Setting up the Session
-SESSION_TYPE = 'redis'
+# SESSION_TYPE = 'redis'
 app.config.from_object(__name__)
 Session(app)
 
