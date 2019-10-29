@@ -180,7 +180,7 @@ class User(UserMixin):
                       FROM users
                       WHERE user_id = {user_id}"""
         
-        engine = create_engine('postgresql+psycopg2://postgres:thesis@localhost/master_thesis')
+        engine = create_engine(app.config['SQLALCHEMY_DATABASE_URL'])
         voter_result = engine.execute(voter_query)
         user = voter_result.first()
         
@@ -305,7 +305,7 @@ def callback():
                       FROM users
                       WHERE user_id = {student_id}"""
         
-    engine = create_engine('postgresql+psycopg2://postgres:thesis@localhost/master_thesis')
+    engine = create_engine(app.config['SQLALCHEMY_DATABASE_URL'])
     voter_result = engine.execute(voter_query)
     voter = voter_result.first()
     user = User(voter[0], voter[1], voter[2])
@@ -318,7 +318,7 @@ def callback():
     already_voted_query = f"""SELECT already_voted FROM vote_check
                             WHERE user_id = '{voter_id}'"""
                     
-    engine = create_engine('postgresql+psycopg2://postgres:thesis@localhost/master_thesis')
+    engine = create_engine(app.config['SQLALCHEMY_DATABASE_URL'])
     already_voted_results = engine.execute(already_voted_query)
     for r in already_voted_results:
         already_voted = r[0]
@@ -355,7 +355,7 @@ def voting():
                                 ON e.election_id = u.election_id
                                 WHERE user_id = {voter_id}"""
         
-        engine = create_engine('postgresql+psycopg2://postgres:thesis@localhost/master_thesis')
+        engine = create_engine(app.config['SQLALCHEMY_DATABASE_URL'])
         voter_election_results = engine.execute(voter_election_query)
         voter_election_result = voter_election_results.first()
         voter_election = {"election_id": voter_election_result[0],
@@ -369,7 +369,7 @@ def voting():
                                     FROM candidates
                                     WHERE election_id = {voter_election['election_id']}"""
         
-        engine = create_engine('postgresql+psycopg2://postgres:thesis@localhost/master_thesis')
+        engine = create_engine(app.config['SQLALCHEMY_DATABASE_URL'])
         election_candidates_results = engine.execute(election_candidates_query)
         election_candidates = []
         i = 1
@@ -393,7 +393,7 @@ def process():
     already_voted_query = f"""SELECT already_voted FROM vote_check
                             WHERE user_id = '{voter_id}'"""
                     
-    engine = create_engine('postgresql+psycopg2://postgres:thesis@localhost/master_thesis')
+    engine = create_engine(app.config['SQLALCHEMY_DATABASE_URL'])
     already_voted_results = engine.execute(already_voted_query)
     for r in already_voted_results:
         already_voted = r[0]
@@ -418,7 +418,7 @@ def process():
                     ORDER BY timestamp DESC
                     LIMIT 1"""
                     
-        engine = create_engine('postgresql+psycopg2://postgres:thesis@localhost/master_thesis')
+        engine = create_engine(app.config['SQLALCHEMY_DATABASE_URL'])
         hash_results = engine.execute(hash_query)
         for r in hash_results:
             previous_hash = r[0]
@@ -427,7 +427,7 @@ def process():
         address_query = f"""SELECT address FROM candidates
                         WHERE name = '{candidate}'""" #{candidate}
         
-        engine = create_engine('postgresql+psycopg2://postgres:thesis@localhost/master_thesis')
+        engine = create_engine(app.config['SQLALCHEMY_DATABASE_URL'])
         address_results = engine.execute(address_query)
         for r in address_results:
             address = r[0]
@@ -449,7 +449,7 @@ def process():
         vote_twice_query = f"""SELECT * FROM votes
                             WHERE from_address = '{new_vote['from_address']}'"""
                     
-        engine = create_engine('postgresql+psycopg2://postgres:thesis@localhost/master_thesis')
+        engine = create_engine(app.config['SQLALCHEMY_DATABASE_URL'])
         vote_twice_results = engine.execute(vote_twice_query)
         for r in vote_twice_results:
             if not len(r) == 0:
@@ -478,7 +478,7 @@ def process():
             add_vote_query = f"""INSERT INTO votes (hash, previous_hash, nonce, timestamp, from_address, to_address, value, signature)
                                 VALUES ('{new_vote['hash']}', '{new_vote['previous_hash']}', {new_vote['nonce']}, '{new_vote['timestamp']}', '{new_vote['from_address']}', '{new_vote['to_address']}', {new_vote['value']}, '{new_vote['signature']}')"""
                     
-            engine = create_engine('postgresql+psycopg2://postgres:thesis@localhost/master_thesis')
+            engine = create_engine(app.config['SQLALCHEMY_DATABASE_URL'])
             engine.execute(add_vote_query)
             print('Transaction on the CHAIN')
             
@@ -487,7 +487,7 @@ def process():
                                              SET already_voted = True
                                              WHERE user_id = {voter_id}"""
                     
-            engine = create_engine('postgresql+psycopg2://postgres:thesis@localhost/master_thesis')
+            engine = create_engine(app.config['SQLALCHEMY_DATABASE_URL'])
             engine.execute(update_already_voted_query)
             print('The already_voted status got updated')
             
@@ -498,7 +498,7 @@ def process():
                                        ON v.election_id = u.election_id
                                        WHERE user_id = {voter_id}"""
                     
-            engine = create_engine('postgresql+psycopg2://postgres:thesis@localhost/master_thesis')
+            engine = create_engine(app.config['SQLALCHEMY_DATABASE_URL'])
             latest_version_results = engine.execute(latest_version_query)
             latest_version_result = latest_version_results.first()
             latest_version = latest_version_result[0]
@@ -519,7 +519,7 @@ def process():
                                               ON v.election_id = u.election_id
                                               WHERE user_id = {voter_id}"""
                   
-            engine = create_engine('postgresql+psycopg2://postgres:thesis@localhost/master_thesis')
+            engine = create_engine(app.config['SQLALCHEMY_DATABASE_URL'])
             engine.execute(update_latest_version_query)
             print('The latest_version status got updated')
             
@@ -528,7 +528,7 @@ def process():
                                        SET version = '{voter_version}'
                                        WHERE user_id = {voter_id}"""
                     
-            engine = create_engine('postgresql+psycopg2://postgres:thesis@localhost/master_thesis')
+            engine = create_engine(app.config['SQLALCHEMY_DATABASE_URL'])
             update_version_results = engine.execute(update_version_query)
                 
         return redirect(url_for('verification'))
@@ -556,7 +556,7 @@ def verification():
     
     # Query data for visualizing the Blockchain
     blockchain_query = "SELECT * FROM votes" 
-    engine = create_engine('postgresql+psycopg2://postgres:thesis@localhost/master_thesis')
+    engine = create_engine(app.config['SQLALCHEMY_DATABASE_URL'])
     blockchain_results = engine.execute(blockchain_query)
     
     # Adding one block to the blockchain for every vote
@@ -605,7 +605,7 @@ def verify():
                                     FROM vote_check
                                     WHERE user_id = {voter_id}"""
                 
-        engine = create_engine('postgresql+psycopg2://postgres:thesis@localhost/master_thesis')
+        engine = create_engine(app.config['SQLALCHEMY_DATABASE_URL'])
         version_control_results = engine.execute(version_control_query)
         version_control_result = version_control_results.first()
         version = version_control_result[0]
@@ -622,7 +622,7 @@ def verify():
         
         # Query data for visualizing the Blockchain
         blockchain_query = "SELECT * FROM votes" 
-        engine = create_engine('postgresql+psycopg2://postgres:thesis@localhost/master_thesis')
+        engine = create_engine(app.config['SQLALCHEMY_DATABASE_URL'])
         blockchain_results = engine.execute(blockchain_query)
         
         # Adding one block to the blockchain for every vote
@@ -667,7 +667,7 @@ def verify():
         verify_vote_query = f"""SELECT * FROM votes
                         WHERE from_address = '{vote_from_address}'"""
         
-        engine = create_engine('postgresql+psycopg2://postgres:thesis@localhost/master_thesis')
+        engine = create_engine(app.config['SQLALCHEMY_DATABASE_URL'])
         verify_vote_results = engine.execute(verify_vote_query)
         verify_vote_result = verify_vote_results.first()
         
@@ -675,7 +675,7 @@ def verify():
         candidate_query = f"""SELECT name FROM candidates
                             WHERE address = '{verify_vote_result[5]}'"""
         
-        engine = create_engine('postgresql+psycopg2://postgres:thesis@localhost/master_thesis')
+        engine = create_engine(app.config['SQLALCHEMY_DATABASE_URL'])
         candidate_results = engine.execute(candidate_query)
         candidate_result = candidate_results.first()
         
@@ -704,7 +704,7 @@ def verify():
         
         # Query data for visualizing the Blockchain
         blockchain_query = "SELECT * FROM votes" 
-        engine = create_engine('postgresql+psycopg2://postgres:thesis@localhost/master_thesis')
+        engine = create_engine(app.config['SQLALCHEMY_DATABASE_URL'])
         blockchain_results = engine.execute(blockchain_query)
         
         # Adding one block to the blockchain for every vote
