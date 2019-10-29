@@ -40,7 +40,7 @@ login_manager.init_app(app)
 # Setting up the Session
 SESSION_TYPE = 'redis'
 r = redis.from_url(os.environ.get("REDIS_URL"))
-SESSION_REDIS = Redis(host=os.environ.get("REDIS_URL"), port=1234)
+# SESSION_REDIS = Redis(host=os.environ.get("REDIS_URL"), port=1234)
 app.config.from_object(__name__)
 Session(app)
 
