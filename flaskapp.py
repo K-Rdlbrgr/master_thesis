@@ -528,11 +528,12 @@ def callback():
 @login_required
 def logout():
     logout_user()
-    return redirect(url_for("index"))
+    return redirect(url_for("users"))
 
 # Central Voting Page
 
 @app.route('/voting/', methods=["GET", "POST"])
+@login_required
 def voting():
     if request.method == "GET":
         
@@ -593,6 +594,7 @@ def voting():
 # Process Page
 
 @app.route('/process/', methods=["GET", "POST"])
+@login_required
 def process():
     # HERE we need to insert a condition in order to check if the voter alreday voted or not using the unique link they got via mail. Because afterwards the keys get generated which are different each time. This would allow users to vote over and over again because their addresses would change constantly.
     # A possible solution would be another table in the database with the user_id, the corresponding link and a boolean value for already_voted that switches to True once, the vote got processed and added to the blockchain. Doing so, we would also be able to see who voted or not, regarding additional information for the survey.
@@ -759,6 +761,7 @@ def process():
 # Verification Page
 
 @app.route('/verification/', methods=["GET", "POST"])
+@login_required
 def verification():
     # Get the version information from the session
     version = session['voter_version']
@@ -811,8 +814,13 @@ def verification():
     #     return render_template('verification.html', version=version)
     
 @app.route('/verify/', methods=["GET", "POST"])
+@login_required
 def verify():
-    if session['voter_version'] == None:
+    try:
+        version = session['voter_version']
+        
+    except KeyError:
+    # if session['voter_version'] == None:
         
         # Translate Hash of link into student id
         # args = request.args.to_dict()
@@ -845,8 +853,8 @@ def verify():
         print(f'We are n the Verify Page and the version is {version}')
         print(f'We are n the Verify Page and the voter_id is {voter_id}')
         
-    else:
-        version = session['voter_version']
+    # else:
+    #     version = session['voter_version']
         
     if request.method == "POST":
         # Create empty list for Blockchain which will result in a list of dictionaries
