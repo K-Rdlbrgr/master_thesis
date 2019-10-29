@@ -57,10 +57,10 @@ ENV = 'prod'
 
 if ENV == 'dev':
     app.debug = True
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:thesis@localhost/master_thesis'
+    app.config['SQLALCHEMY_DATABASE_URL'] = 'postgresql://postgres:thesis@localhost/master_thesis'
 else:
     app.debug = False
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
+    app.config['SQLALCHEMY_DATABASE_URL'] = os.environ.get('DATABASE_URL')
     
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
