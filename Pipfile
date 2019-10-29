@@ -19,6 +19,7 @@ oauthlib = "*"
 pyopenssl = "*"
 flask-login = "*"
 bitcoin = "*"
+redis = "*"
 
 [requires]
 python_version = "3.7"

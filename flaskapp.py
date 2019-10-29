@@ -4,6 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import *
 from bitcoin import *
 from oauthlib.oauth2 import WebApplicationClient
+from redis import Redis
 from flask_login import (
     LoginManager,
     current_user,
