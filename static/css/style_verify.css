@@ -49,11 +49,6 @@ hr {
 }
 
 /* Individual classes */
-/* .block {
-  border: 2px solid var(--primary-text-dark);
-  padding: 0;
-  margin: 0;
-} */
 
 .light {
   color: rgb(107, 107, 107);
@@ -128,20 +123,13 @@ hr {
   background: linear-gradient(12deg, rgba(49, 224, 131, 1) 0%, rgba(25, 205, 227, 1) 100%);
   color: var(--primary-text-bright);
   width: 100%;
-  /* max-height: 520px; */
 }
 
 .blockchain {
   background: linear-gradient(12deg, rgba(49, 224, 131, 1) 0%, rgba(25, 205, 227, 1) 100%);
   color: var(--primary-text-bright);
   width: 100%;
-  /* max-height: 850px; */
 }
-
-/* .blockchain-arrow svg {
-  padding-top: 80px;
-  max-height: 500px;
-} */
 
 .blockchain-inner {
   background: transparent;
@@ -202,12 +190,6 @@ hr {
   border-left: 50vw solid transparent;
   border-right: 50vw solid transparent;
 }
-
-/* @media (max-width: 991px) {
-  .blockchain {
-    max-height: 920px;
-  }
-} */
 
 /* Blockchain Viewer */
 .scrolling-wrapper-flexbox {
