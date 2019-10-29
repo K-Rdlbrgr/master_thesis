@@ -18,6 +18,7 @@ requests = "*"
 oauthlib = "*"
 pyopenssl = "*"
 flask-login = "*"
+bitcoin = "*"
 
 [requires]
 python_version = "3.7"
