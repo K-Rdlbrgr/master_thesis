@@ -38,7 +38,7 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 
 # Setting up the Session
-SESSION_TYPE = 'memcache'
+SESSION_TYPE = 'redis'
 # SESSION_REDIS = Redis(host=os.environ.get("REDIS_URL"), port=1234)
 r = redis.from_url(os.environ.get("REDIS_URL"))
 app.config.from_object(__name__)
