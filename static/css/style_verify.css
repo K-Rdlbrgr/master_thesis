@@ -265,8 +265,11 @@ hr {
   background: rgba(27, 27, 27, 0.2);
 }
 
-.blockchain .container button {
-  background: rgba(27, 27, 27, 0.8);
+#blockchain_info {
+  background: transparent;
+}
+
+#blockchain_info i {
   color: var(--primary-text-bright);
-  border: 1px solid var(--primary-text-dark);
+  background: rgba(27, 27, 27, 0.8);
 }
