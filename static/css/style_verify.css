@@ -264,3 +264,9 @@ hr {
 .block .card li {
   background: rgba(27, 27, 27, 0.2);
 }
+
+.blockchain .container button {
+  background: rgba(27, 27, 27, 0.8);
+  color: var(--primary-text-bright);
+  border: 1px solid var(--primary-text-dark);
+}
