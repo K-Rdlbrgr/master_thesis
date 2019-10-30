@@ -30,3 +30,6 @@ $('#myModal').on('shown.bs.modal', function() {
 if (!document.location.hash) {
   document.location.hash = 'vote-section';
 }
+
+var left = $('.scrolling-wrapper-flexbox').width();
+$('.scrolling-wrapper-flexbox').scrollLeft(left);
