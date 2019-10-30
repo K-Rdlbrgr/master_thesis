@@ -282,7 +282,7 @@ hr {
 }
 
 .blockchain-info .text-truncate {
-  white-space: wrap;
+  white-space: normal;
 }
 
 .blockchain-info .text-truncate small {
