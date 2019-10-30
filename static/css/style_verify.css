@@ -265,7 +265,7 @@ hr {
   background: rgba(27, 27, 27, 0.2);
 }
 
-.blockchain_info .card {
+.blockchain-info .card {
   background: rgba(27, 27, 27, 0.8);
   flex: 0 0 auto;
   margin: 0 10px;
@@ -273,6 +273,6 @@ hr {
   font-size: 15px;
 }
 
-.blockchain-info-inner {
+.blockchain-info .card li {
   background: rgba(27, 27, 27, 0.2);
 }
