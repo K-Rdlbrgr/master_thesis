@@ -30,7 +30,3 @@ $('#myModal').on('shown.bs.modal', function() {
 if (!document.location.hash) {
   document.location.hash = 'vote-section';
 }
-
-$(function() {
-  $('#blockchain_info').popover();
-});

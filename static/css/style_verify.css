@@ -265,11 +265,14 @@ hr {
   background: rgba(27, 27, 27, 0.2);
 }
 
-#blockchain_info {
-  background: transparent;
+.blockchain_info .card {
+  background: rgba(27, 27, 27, 0.8);
+  flex: 0 0 auto;
+  margin: 0 10px;
+  color: var(--primary-text-bright);
+  font-size: 15px;
 }
 
-#blockchain_info i {
-  color: var(--primary-text-bright);
-  background: rgba(27, 27, 27, 0.8);
+.blockchain-info-inner {
+  background: rgba(27, 27, 27, 0.2);
 }
