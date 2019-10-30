@@ -308,8 +308,12 @@ hr {
   padding-right: 0;
 }
 
-.blockchain-info .alert button .close {
-  text-shadow: none;
-  padding: 0 1rem;
+.blockchain-info .alert-dismissible .close {
+  top: -0.3rem;
+  padding: 0 0.6rem;
   color: var(--primary-text-bright);
+}
+
+.blockchain-info .close {
+  text-shadow: none;
 }
