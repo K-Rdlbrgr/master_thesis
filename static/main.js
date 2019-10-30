@@ -31,5 +31,6 @@ if (!document.location.hash) {
   document.location.hash = 'vote-section';
 }
 
-var left = $('.scrolling-wrapper-flexbox').scrollWidth;
-$('.scrolling-wrapper-flexbox').scrollLeft(left);
+var element = $('.scrolling-wrapper-flexbox').get(0);
+var left = element.scrollWidth;
+element.scrollLeft(left);
