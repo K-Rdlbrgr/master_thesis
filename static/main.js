@@ -33,4 +33,4 @@ if (!document.location.hash) {
 
 var element = $('.scrolling-wrapper-flexbox').get(0);
 var left = element.scrollWidth;
-element.scrollLeft(left);
+element.scrollLeft = left;
