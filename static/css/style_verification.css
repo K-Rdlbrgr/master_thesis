@@ -284,3 +284,59 @@ hr.nova-logo {
     max-width: 80vw;
   }
 }
+
+.blockchain-info .card {
+  background: rgba(27, 27, 27, 0.8);
+  /* background: rgba(192, 11, 11, 0.7); */
+  flex: 0 0 auto;
+  margin: 0;
+  color: var(--primary-text-bright);
+  font-size: 15px;
+}
+
+.blockchain-info .card .card-body {
+  padding: 0.5rem 0 0 0;
+}
+
+.blockchain-info .card li {
+  background: rgba(27, 27, 27, 0.2);
+}
+
+.blockchain-info .text-truncate {
+  white-space: normal;
+}
+
+.blockchain-info .text-truncate small {
+  line-height: 1.2;
+}
+
+.blockchain-info .card-title {
+  margin-bottom: 0.5rem;
+}
+
+.blockchain-info .list-group-item {
+  padding: 0.5rem;
+}
+
+.blockchain-info .alert {
+  background: transparent;
+  padding: 0;
+  border: none;
+}
+
+.blockchain-info .alert-dismissible {
+  padding-right: 0;
+}
+
+.blockchain-info .alert-dismissible .close {
+  padding: 0 0.6rem;
+  color: var(--primary-text-bright);
+}
+
+.blockchain-info .close {
+  text-shadow: none;
+}
+
+.blockchain-info span {
+  font-size: 19px;
+}

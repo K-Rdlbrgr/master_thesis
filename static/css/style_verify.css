@@ -309,11 +309,14 @@ hr {
 }
 
 .blockchain-info .alert-dismissible .close {
-  top: -0.3rem;
   padding: 0 0.6rem;
   color: var(--primary-text-bright);
 }
 
 .blockchain-info .close {
   text-shadow: none;
+}
+
+.blockchain-info span {
+  font-size: 19px;
 }
