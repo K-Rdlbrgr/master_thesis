@@ -177,17 +177,18 @@
         </div>
         <h2>THE VOTING BLOCKCHAIN</h2>
         <hr />
-        <h6>
+        <h6 class="mb-5">
           The illustration below shows this system’s Blockchain which contains all casted votes in an encrypted and
           anonymous manner. One block means one vote. To encrypt the vote and make it anonymous, each block includes a
           hash, which is a security number randomly calculated from the vote’s timestamp and the previous hash (Hash of
           the previous block). Moreover, you see the encrypted voter address and the chosen candidate.
         </h6>
-        <div class="row justify-content-end d-block d-sm-none">
+        <div class="row justify-content-end d-block d-sm-none mb-2">
           <div class="col-12 blockchain-info">
             <div class="card">
               <div class="card-body">
                 <h6 class="card-title">
+                  <i class="fas fa-info-circle"></i>
                   Note For Mobile Devices
                 </h6>
                 <ul class="list-group list-group-flush">
@@ -202,7 +203,7 @@
           </div>
         </div>
         <div class="blockchain-inner">
-          <div class="row text-left mt-5">
+          <div class="row text-left">
             <div class="col-12">
               <div class="scrolling-wrapper-flexbox">
                 {% for block in blockchain %}
