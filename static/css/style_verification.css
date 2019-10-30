@@ -238,6 +238,7 @@ hr.nova-logo {
   display: flex;
   flex-wrap: nowrap;
   overflow-x: auto;
+  direction: rtl;
   -webkit-overflow-scrolling: touch;
 }
 
