@@ -269,7 +269,7 @@ hr {
   background: rgba(27, 27, 27, 0.8);
   /* background: rgba(192, 11, 11, 0.7); */
   flex: 0 0 auto;
-  margin: 0 10px;
+  margin: 0;
   color: var(--primary-text-bright);
   font-size: 15px;
 }
@@ -300,4 +300,16 @@ hr {
 
 .blockchain-info .alert {
   background: transparent;
+  padding: 0;
+  border: none;
+}
+
+.blockchain-info .alert-dismissible {
+  padding-right: 0;
+}
+
+.blockchain-info .alert button .close {
+  text-shadow: none;
+  padding: 0 1rem;
+  color: var(--primary-text-bright);
 }
