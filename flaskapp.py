@@ -39,8 +39,6 @@ login_manager.init_app(app)
 
 # Setting up the Session
 SESSION_TYPE = 'redis'
-SESSION_REDIS = redis.from_url(os.environ.get("REDIS_URL"))
-# r = redis.from_url(os.environ.get("REDIS_URL"))
 app.config.from_object(__name__)
 Session(app)
 
@@ -62,9 +60,14 @@ ENV = 'prod'
 if ENV == 'dev':
     app.debug = True
     app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:thesis@localhost/master_thesis'
+    GOOGLE_REDIRECT_ADDRESS = "https://127.0.0.1:5000/login/callback"
+    
 else:
     app.debug = False
     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
+    GOOGLE_REDIRECT_ADDRESS = "https://votechain-sbe.herokuapp.com/login/callback"
+    SESSION_REDIS = redis.from_url(os.environ.get("REDIS_URL"))
+    
     
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -255,7 +258,7 @@ def login():
     # scopes that let you retrieve user's profile from Google
     request_uri = client.prepare_request_uri(
         authorization_endpoint,
-        redirect_uri="https://votechain-sbe.herokuapp.com/login/callback",
+        redirect_uri=GOOGLE_REDIRECT_ADDRESS,
         scope=["openid", "email", "profile"],
         prompt="select_account",
     )
@@ -396,14 +399,37 @@ def process():
     
     # QUERY to check if this variable corresponding to the already_voted boolean in the vote_check table of the link the user used. If it's false, proceed. If it's true, render the error of not able to vote twice
     already_voted_query = f"""SELECT already_voted FROM vote_check
-                            WHERE user_id = '{voter_id}'"""
+                              WHERE user_id = '{voter_id}'"""
                     
     engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
     already_voted_results = engine.execute(already_voted_query)
     for r in already_voted_results:
         already_voted = r[0]
     
-    if request.method == "POST" and already_voted == False:
+    # Checking if the voter already voted and in case he did, render the pocess.html by passing in the corresponding error
+    if already_voted == True:
+        message = 'You already casted your vote for this election and you are not allowed to vote twice.'
+        return render_template('process.html', message = message) 
+        
+    # QUERY the end_time of the corresponding Election in order to check if the election is still open
+    end_time_query = f"""SELECT end_time
+                         FROM elections as e
+                         INNER JOIN users as u
+                         ON e.election_id = u.election_id
+                         WHERE user_id = {voter_id}"""
+                         
+    engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
+    end_time_results = engine.execute(end_time_query)
+    end_time_result = end_time_results.first()
+    end_time = end_time_result[0]
+    
+    # Checking if the current voting approach is still valid regarding the end_time limit of the election
+    if end_time < datetime.datetime.now():
+        message = f'You cannot vote anymore since the election ended on {end_time.day}/{end_time.month}/{end_time.year} at {end_time.strftime("%H:%M:%S")}'
+        return render_template('process.html', message = message)
+    
+    # Continuing with the Voting Process in case the user passes the first two crucial checks
+    if request.method == "POST":
         
         # Creating User's KeyPair/Address and corresponding Sessions
         user_privateKey = random_key()
@@ -537,10 +563,6 @@ def process():
             update_version_results = engine.execute(update_version_query)
                 
         return redirect(url_for('verification'))
-    
-    else:
-        message = 'You cannot vote Twice'
-        return render_template('process.html', message = message)
 
 # Verification Page
 
@@ -742,6 +764,10 @@ def verify():
         
         return render_template('verify.html', version=version, blockchain=blockchain)
 
-
-if __name__ == "__main__":
-    app.run(threaded=True, port=5000)
+if ENV == 'dev':
+    if __name__ == "__main__":
+        app.run(ssl_context='adhoc')
+        
+else:
+    if __name__ == "__main__":
+        app.run(threaded=True, port=5000)
