@@ -37,22 +37,6 @@ GOOGLE_DISCOVERY_URL = ("https://accounts.google.com/.well-known/openid-configur
 login_manager = LoginManager()
 login_manager.init_app(app)
 
-# Setting up the Session
-SESSION_TYPE = 'redis'
-app.config.from_object(__name__)
-Session(app)
-
-# OAuth 2 client setup
-client = WebApplicationClient(GOOGLE_CLIENT_ID)
-
-# Flask-Login helper to retrieve a user from our db
-@login_manager.user_loader
-def load_user(user_id):
-    return User.get(user_id)
-
-# Set Flask Login-Manager Login-View
-login_manager.login_view = "login"
-
 # We introduce the ENV variable to quickly switch on and off debug mode depending on if we just want to develop the app or deploy and use it. It also sets the connection to our postgres database
 
 ENV = 'prod'
@@ -70,6 +54,22 @@ else:
     
     
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+# Setting up the Session
+SESSION_TYPE = 'redis'
+app.config.from_object(__name__)
+Session(app)
+
+# OAuth 2 client setup
+client = WebApplicationClient(GOOGLE_CLIENT_ID)
+
+# Flask-Login helper to retrieve a user from our db
+@login_manager.user_loader
+def load_user(user_id):
+    return User.get(user_id)
+
+# Set Flask Login-Manager Login-View
+login_manager.login_view = "login"
 
 # We introduce our database model and define the different tables within the model  with all their columns
 
