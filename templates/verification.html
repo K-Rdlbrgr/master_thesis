@@ -127,8 +127,7 @@
         <h2>VERIFY YOUR VOTE</h2>
         <hr />
         <h6 class="text-center">
-          In order to see the details of your vote, simply paste your Password in the box below and hit the Verify
-          Button!
+            In order to see and verify the details of your vote including the selected candidate, simply paste your Voter Key in the box below and hit the Verify Button!
         </h6>
         <form action="{{ url_for('verify') }}" method="POST" id="verify_form">
           <div class="inline-block mt-3">
@@ -213,7 +212,7 @@
           The illustration below shows this system’s Blockchain which contains all casted votes in an encrypted and
           anonymous manner. One block means one vote. To encrypt the vote and make it anonymous, each block includes a
           hash, which is a security number randomly calculated from the vote’s timestamp and the previous hash (Hash of
-          the previous block). Moreover, you see the encrypted voter address and the chosen candidate.
+          the previous block). Moreover, you see the encrypted voter address which you are able to compare with your own, once you verified your vote in the next step.
         </h6>
         <div class="row justify-content-end d-block d-sm-none mb-4">
           <div class="col-12 blockchain-info">
@@ -230,7 +229,7 @@
                   <ul class="list-group list-group-flush">
                     <li class="list-group-item">
                       <div class="text-truncate">
-                        <small>Just scroll left and right in order to see the whole blockchain with all currently casted votes</small>
+                        <small>Just scroll left and right in order to see the whole blockchain with all casted votes</small>
                       </div>
                     </li>
                   </ul>
@@ -312,8 +311,7 @@
         <h2>VERIFY YOUR VOTE</h2>
         <hr />
         <h6 class="text-center">
-          In order to see the details of your vote, simply paste your Voter Key in the box below and hit the Verify
-          Button!
+            In order to see and verify the details of your vote including the selected candidate, simply paste your Voter Key in the box below and hit the Verify Button!
         </h6>
         <form action="{{ url_for('verify') }}" method="POST" id="verify_form">
           <div class="inline-block mt-3">
