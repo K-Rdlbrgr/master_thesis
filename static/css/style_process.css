@@ -1,0 +1,70 @@
+@import url('https://fonts.googleapis.com/css?family=Montserrat:400,800');
+
+:root {
+  --primary-bg-light: rgb(247, 247, 247);
+  --primary-bg-color-1: rgb(49, 224, 131);
+  --primary-bg-color-2: rgba(25, 205, 227);
+  --primary-text-dark: rgb(27, 27, 27);
+  --primary-text-bright: rgb(247, 247, 247);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Montserrat', sans-serif;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+h1 {
+  font-weight: bold;
+  margin: 0;
+}
+
+p {
+  font-size: 14px;
+  font-weight: 100;
+  line-height: 20px;
+  letter-spacing: 0.5px;
+  margin: 20px 0 30px;
+}
+
+span {
+  font-size: 12px;
+}
+
+a {
+  color: #333;
+  font-size: 14 px;
+  text-decoration: none;
+  margin: 15px 0;
+}
+
+hr {
+  color: #333;
+}
+
+/*  Individual Elements */
+
+.avatar img {
+  max-width: 300px;
+  padding: 30px;
+}
+
+.avatar {
+  min-height: 250px;
+  background: linear-gradient(12deg, rgba(49, 224, 131, 1) 0%, rgba(25, 205, 227, 1) 200%);
+}
+
+.error {
+  height: 100vh;
+}
+
+.nova-logo {
+  position: relative;
+  min-height: 250px;
+}

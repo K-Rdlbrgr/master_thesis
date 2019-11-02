@@ -17,13 +17,36 @@
     <script src="https://kit.fontawesome.com/2b498beeb7.js"></script>
     <!-- CSS -->
     <!-- We link our own CSS style sheet in order to manipulate the appearance of our html code -->
-    <link rel="stylesheet" href="/static/css/style_verification.css" />
+    <link rel="stylesheet" href="/static/css/style_process.css" />
     <title>NOVA SBE - Online Voting Verification</title>
   </head>
 
   <body>
     <!-- Displays the Error message that a voter has already casted their vote if they did so -->
-    {{ message }}
+    <!-- Card -->
+    <div class="row error justify-content-center align-content-center align-items-center">
+      <div class="col-12">
+        <div class="card testimonial-card ml-2 mr-2">
+          <!-- Avatar -->
+          <div class="avatar text-center">
+            <div class="row nova-logo align-content-center align-items-center">
+              <div class="col-12">
+                <img src="/static/img/nova-logo-2.png" alt="nova-logo-2" class="align-self-center" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Content -->
+          <div class="card-body">
+            <!-- Name -->
+            <h4 class="card-title"><i class="fas fa-exclamation-triangle mr-2"></i> An Error Occured</h4>
+            <hr />
+            <!-- Quotation -->
+            <p>{{ message }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <!-- BOOTSTRAP SCRIPTS -->
     <!-- More necessary scripts in order to use bootstrap on the website -->
