@@ -45,11 +45,13 @@ if ENV == 'dev':
     app.debug = True
     app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:thesis@localhost/master_thesis'
     GOOGLE_REDIRECT_ADDRESS = "https://127.0.0.1:5000/login/callback"
+    VERIFICATION_REQUEST_URL = "https://127.0.0.1:5000/voting/"
     
 else:
     app.debug = False
     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
     GOOGLE_REDIRECT_ADDRESS = "https://votechain-sbe.herokuapp.com/login/callback"
+    VERIFICATION_REQUEST_URL = "https://votechain-sbe.herokuapp.com/voting/"    
     SESSION_REDIS = redis.from_url(os.environ.get("REDIS_URL"))
     
     
@@ -573,7 +575,8 @@ def process():
 @login_required
 def verification():
     # Making sure the User logged in with his Nova Account before entering this route
-    if request.referrer == None:
+    print(request.referrer)
+    if request.referrer != VERIFICATION_REQUEST_URL:
         return redirect(url_for("login"))
     
     # Get the version information from the session
