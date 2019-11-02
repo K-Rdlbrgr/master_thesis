@@ -187,7 +187,7 @@ class User(UserMixin):
                       FROM users
                       WHERE user_id = {user_id}"""
         
-        engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
+        
         voter_result = engine.execute(voter_query)
         user = voter_result.first()
         
@@ -240,6 +240,10 @@ def isValid(vote, pubkey):
             return False
 
         return ecdsa_verify(calculateHash(vote), vote['signature'], pubkey)
+
+# DB CONNECTION
+
+engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
 
 # ROUTES
 
@@ -313,7 +317,6 @@ def callback():
                       FROM users
                       WHERE user_id = {student_id}"""
         
-    engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
     voter_result = engine.execute(voter_query)
     voter = voter_result.first()
     user = User(voter[0], voter[1], voter[2])
@@ -324,12 +327,12 @@ def callback():
     
     # QUERY to check if this variable corresponding to the already_voted boolean in the vote_check table of the link the user used. If it's false, proceed. If it's true, render the error of not able to vote twice
     already_voted_query = f"""SELECT already_voted FROM vote_check
-                            WHERE user_id = '{voter_id}'"""
+                              WHERE user_id = '{voter_id}'"""
                     
-    engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
     already_voted_results = engine.execute(already_voted_query)
     for r in already_voted_results:
         already_voted = r[0]
+    already_voted_results.close()
 
     # Send user back to homepage
     if already_voted == False:  
@@ -358,12 +361,11 @@ def voting():
         
         # QUERY for the corresponding election and save that data
         voter_election_query = f"""SELECT e.election_id, e.name, e.start_time, e.end_time, e.program
-                                FROM elections AS e
-                                INNER JOIN users AS u
-                                ON e.election_id = u.election_id
-                                WHERE user_id = {voter_id}"""
+                                   FROM elections AS e
+                                   INNER JOIN users AS u
+                                   ON e.election_id = u.election_id
+                                   WHERE user_id = {voter_id}"""
         
-        engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
         voter_election_results = engine.execute(voter_election_query)
         voter_election_result = voter_election_results.first()
         voter_election = {"election_id": voter_election_result[0],
@@ -377,7 +379,6 @@ def voting():
                                     FROM candidates
                                     WHERE election_id = {voter_election['election_id']}"""
         
-        engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
         election_candidates_results = engine.execute(election_candidates_query)
         election_candidates = []
         i = 1
@@ -385,6 +386,7 @@ def voting():
             election_candidates.append({"name": candidate[0],
                                         "number": i})
             i += 1
+        election_candidates_results.close()
         
         return render_template('voting.html', election_candidates=election_candidates, voter_election=voter_election)
     
@@ -401,31 +403,36 @@ def process():
     already_voted_query = f"""SELECT already_voted FROM vote_check
                               WHERE user_id = '{voter_id}'"""
                     
-    engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
     already_voted_results = engine.execute(already_voted_query)
     for r in already_voted_results:
         already_voted = r[0]
+    already_voted_results.close()
     
     # Checking if the voter already voted and in case he did, render the pocess.html by passing in the corresponding error
     if already_voted == True:
         message = 'You already casted your vote for this election and you are not allowed to vote twice.'
         return render_template('process.html', message = message) 
         
-    # QUERY the end_time of the corresponding Election in order to check if the election is still open
-    end_time_query = f"""SELECT end_time
-                         FROM elections as e
-                         INNER JOIN users as u
-                         ON e.election_id = u.election_id
-                         WHERE user_id = {voter_id}"""
+    # QUERY the end_time/start_time of the corresponding Election in order to check if the election is still/already open
+    time_query = f"""SELECT end_time, start_time
+                     FROM elections as e
+                     INNER JOIN users as u
+                     ON e.election_id = u.election_id
+                     WHERE user_id = {voter_id}"""
                          
-    engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
-    end_time_results = engine.execute(end_time_query)
-    end_time_result = end_time_results.first()
-    end_time = end_time_result[0]
+    time_results = engine.execute(time_query)
+    time_result = time_results.first()
+    end_time = time_result[0]
+    start_time = time_result[1]
     
     # Checking if the current voting approach is still valid regarding the end_time limit of the election
     if end_time < datetime.datetime.now():
         message = f'You cannot vote anymore since the election ended on {end_time.day}/{end_time.month}/{end_time.year} at {end_time.strftime("%H:%M:%S")}'
+        return render_template('process.html', message = message)
+    
+    # Checking if the current voting approach is still valid regarding the start_time limit of the election
+    if start_time > datetime.datetime.now():
+        message = f'You cannot vote yet since the election just starts on {start_time.day}/{start_time.month}/{start_time.year} at {start_time.strftime("%H:%M:%S")}'
         return render_template('process.html', message = message)
     
     # Continuing with the Voting Process in case the user passes the first two crucial checks
@@ -446,22 +453,22 @@ def process():
         
         # Querying the database to find the previous hash
         hash_query = """SELECT hash FROM votes
-                    ORDER BY timestamp DESC
-                    LIMIT 1"""
+                        ORDER BY timestamp DESC
+                        LIMIT 1"""
                     
-        engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
         hash_results = engine.execute(hash_query)
         for r in hash_results:
             previous_hash = r[0]
+        hash_results.close()        
             
         # Querying the database to find the address of the candidate    
         address_query = f"""SELECT address FROM candidates
-                        WHERE name = '{candidate}'""" #{candidate}
+                            WHERE name = '{candidate}'""" #{candidate}
         
-        engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
         address_results = engine.execute(address_query)
         for r in address_results:
             address = r[0]
+        address_results.close()        
             
         # Creating the vote as a dictionary to later add to the Blockchain
         new_vote = {'hash':'',
@@ -480,12 +487,12 @@ def process():
         vote_twice_query = f"""SELECT * FROM votes
                             WHERE from_address = '{new_vote['from_address']}'"""
                     
-        engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
         vote_twice_results = engine.execute(vote_twice_query)
         for r in vote_twice_results:
             if not len(r) == 0:
                 print('Cannot vote twice')
                 flag = True
+        vote_twice_results.close() 
 
         #Check if both from and to address are given in the transaction
         if new_vote['from_address'] == None or new_vote['to_address'] == None:
@@ -509,7 +516,6 @@ def process():
             add_vote_query = f"""INSERT INTO votes (hash, previous_hash, nonce, timestamp, from_address, to_address, value, signature)
                                 VALUES ('{new_vote['hash']}', '{new_vote['previous_hash']}', {new_vote['nonce']}, '{new_vote['timestamp']}', '{new_vote['from_address']}', '{new_vote['to_address']}', {new_vote['value']}, '{new_vote['signature']}')"""
                     
-            engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
             engine.execute(add_vote_query)
             print('Transaction on the CHAIN')
             
@@ -518,7 +524,6 @@ def process():
                                              SET already_voted = True
                                              WHERE user_id = {voter_id}"""
                     
-            engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
             engine.execute(update_already_voted_query)
             print('The already_voted status got updated')
             
@@ -529,7 +534,6 @@ def process():
                                        ON v.election_id = u.election_id
                                        WHERE user_id = {voter_id}"""
                     
-            engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
             latest_version_results = engine.execute(latest_version_query)
             latest_version_result = latest_version_results.first()
             latest_version = latest_version_result[0]
@@ -550,7 +554,6 @@ def process():
                                               ON v.election_id = u.election_id
                                               WHERE user_id = {voter_id}"""
                   
-            engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
             engine.execute(update_latest_version_query)
             print('The latest_version status got updated')
             
@@ -559,8 +562,7 @@ def process():
                                        SET version = '{voter_version}'
                                        WHERE user_id = {voter_id}"""
                     
-            engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
-            update_version_results = engine.execute(update_version_query)
+            engine.execute(update_version_query)
                 
         return redirect(url_for('verification'))
 
@@ -583,7 +585,7 @@ def verification():
     
     # Query data for visualizing the Blockchain
     blockchain_query = "SELECT * FROM votes" 
-    engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
+    
     blockchain_results = engine.execute(blockchain_query)
     
     # Adding one block to the blockchain for every vote
@@ -613,6 +615,9 @@ def verification():
         
         color_counter += 1
         previous_color_counter += 1
+        
+    # Closing ResultProxy
+    blockchain_results.close()
     
     return render_template('verification.html',user_address=user_address, user_publicKey=user_publicKey, user_privateKey=user_privateKey, version=version, blockchain=blockchain)
     
@@ -632,7 +637,6 @@ def verify():
                                     FROM vote_check
                                     WHERE user_id = {voter_id}"""
                 
-        engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
         version_control_results = engine.execute(version_control_query)
         version_control_result = version_control_results.first()
         version = version_control_result[0]
@@ -649,7 +653,7 @@ def verify():
         
         # Query data for visualizing the Blockchain
         blockchain_query = "SELECT * FROM votes" 
-        engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
+        
         blockchain_results = engine.execute(blockchain_query)
         
         # Adding one block to the blockchain for every vote
@@ -680,6 +684,9 @@ def verify():
             color_counter += 1
             previous_color_counter += 1
         
+        # Closing ResultProxy
+        blockchain_results.close()
+        
         req = request.form
         
         # Use the private key to generate the corresponding address
@@ -692,17 +699,15 @@ def verify():
         
         # QUERY to find the correct transaction based on the address
         verify_vote_query = f"""SELECT * FROM votes
-                        WHERE from_address = '{vote_from_address}'"""
+                                WHERE from_address = '{vote_from_address}'"""
         
-        engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
         verify_vote_results = engine.execute(verify_vote_query)
         verify_vote_result = verify_vote_results.first()
         
         # Query for candidate name
         candidate_query = f"""SELECT name FROM candidates
-                            WHERE address = '{verify_vote_result[5]}'"""
+                              WHERE address = '{verify_vote_result[5]}'"""
         
-        engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
         candidate_results = engine.execute(candidate_query)
         candidate_result = candidate_results.first()
         
@@ -731,7 +736,7 @@ def verify():
         
         # Query data for visualizing the Blockchain
         blockchain_query = "SELECT * FROM votes" 
-        engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
+        
         blockchain_results = engine.execute(blockchain_query)
         
         # Adding one block to the blockchain for every vote
@@ -761,6 +766,9 @@ def verify():
             
             color_counter += 1
             previous_color_counter += 1
+            
+        # Closing ResultProxy
+        blockchain_results.close()
         
         return render_template('verify.html', version=version, blockchain=blockchain)
 
