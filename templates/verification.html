@@ -73,10 +73,10 @@
         <h2>COPY YOUR PASSWORD</h2>
         <hr />
         <h6>
-          We generated a password for you so that you can verify your vote (Step 3). To do so, please copy your password below.
+          We generated a secret password for you so that you can verify your vote in Step 3 – Please copy it below.
         </h6>
         <div class="inline-block mt-3">
-          <label class="mr-2" for="copy_privateKey">Password: </label>
+          <label class="mr-2" for="copy_privateKey"><strong>Password: </strong></label>
           <input type="text" value="{{ user_privateKey }}" id="copy_privateKey" size="25" />
         </div>
         <button type="button" class="btn btn-lg mt-2" onclick="copyFunction('copy_privateKey')">Copy</button>
@@ -97,7 +97,7 @@
         <h2>TWO FACTOR AUTHENTICATION</h2>
         <hr />
         <h6>
-            Two-factor authentication adds an additional layer of security to the authentication process by making it harder for attackers to gain access to a person's online accounts. We implemented it by generating an additional, individual password in Step 1. To provide the highest possible privacy for your vote, your password is not being stored in our database and will not be accessible anymore once you left this page. Please make sure you copied it and save it somewhere on your device in order to verify your vote later.
+            Two-factor authentication adds an additional layer of security to the authentication process by making it harder for attackers to gain access to a person's online accounts. We implemented it by generating an individual password for you in Step 1. To provide the highest possible privacy for your vote, your password is not being stored in our database and will not be accessible anymore once you left this page. Please make sure you copied it and save it somewhere on your device in order to verify your vote later.
         </h6>
         <!-- <div class="row justify-content-center mt-4">
           <div class="col-12 col-sm-8 col-md-6 col-lg-4">
@@ -127,7 +127,7 @@
         <h2>VERIFY YOUR VOTE</h2>
         <hr />
         <h6 class="text-center">
-            In order to see and verify the details of your vote including the selected candidate, simply paste your Voter Key in the box below and hit the Verify Button!
+            In order to see and verify the details of your vote including the selected candidate, simply paste your password in the box below and hit the Verify Button!
         </h6>
         <form action="{{ url_for('verify') }}" method="POST" id="verify_form">
           <div class="inline-block mt-3">
@@ -155,8 +155,7 @@
         <h2>HELP US AND WIN A FREE DINNER</h2>
         <hr />
         <h6 class="text-center">
-          Please support our research by filling out this survey. It takes less than 3 minutes and gives you the chance
-          to win a free dinner at Azure Restaurant on Campus. The winner will be contacted tomorrow. Thank you.
+          Please support our Research by filling out the following survey. It takes less than three minutes and gives you the chance to win a free Dinner for you and three friends at Azure Restaurant on Campus! The winner will be contacted tomorrow. Thank you!
         </h6>
         <div class="mt-2">
           <a href="">
@@ -184,8 +183,7 @@
         <h2>COPY YOUR VOTER KEY</h2>
         <hr />
         <h6>
-          Since this voting system is running on a blockchain to ensure a transparent and secure election, you can use
-          your voting credentials to check your vote in Step 3. To do so, please copy your Voter Key below.
+            Since this system is running on a blockchain to ensure a secure, anonymous and transparent election, you can use your <strong>secret</strong> Voter Key to verify your vote in Step 3 - Please copy it below! Your Voter Key is not stored in our database and it will not be available again after you closed this page.
         </h6>
         <div class="inline-block mt-3">
           <label class="mr-2" for="copy_privateKey">Voter Key: </label>
@@ -209,10 +207,7 @@
         <h2>THE VOTING BLOCKCHAIN</h2>
         <hr />
         <h6>
-          The illustration below shows this system’s Blockchain which contains all casted votes in an encrypted and
-          anonymous manner. One block means one vote. To encrypt the vote and make it anonymous, each block includes a
-          hash, which is a security number randomly calculated from the vote’s timestamp and the previous hash (Hash of
-          the previous block). Moreover, you see the encrypted voter address which you are able to compare with your own, once you verified your vote in the next step.
+          The illustration below shows this system’s blockchain, which contains all casted votes in an encrypted and anonymous manner. One block means one vote. To encrypt the vote, each block includes a hash and the previous block’s hash, which are security numbers randomly calculated from the vote’s data. Including both, current and previous hash, creates a chain between all the votes which protects them from unnoticed tampering. Moreover, you can see the encrypted voter address. Feel free to search for your own vote in the Blockchain, identifiable by matching your From Address, which you will find in step 3.
         </h6>
         <div class="row justify-content-end d-block d-sm-none mb-4">
           <div class="col-12 blockchain-info">
@@ -229,7 +224,7 @@
                   <ul class="list-group list-group-flush">
                     <li class="list-group-item">
                       <div class="text-truncate">
-                        <small>Just scroll left and right in order to see the whole blockchain with all casted votes</small>
+                        <small>Just scroll left and right in order to see the whole blockchain containing all casted votes so far.</small>
                       </div>
                     </li>
                   </ul>
@@ -339,8 +334,7 @@
         <h2>HELP US AND WIN A FREE DINNER</h2>
         <hr />
         <h6 class="text-center">
-          Please support our research by filling out this survey. It takes less than 3 minutes and gives you the chance
-          to win a free dinner at Azure Restaurant on Campus. The winner will be contacted tomorrow. Thank you.
+          Please support our Research by filling out the following survey. It takes less than three minutes and gives you the chance to win a free Dinner for you and three friends at Azure Restaurant on Campus! The winner will be contacted tomorrow. Thank you!
         </h6>
         <div class="mt-2">
           <a href="">
