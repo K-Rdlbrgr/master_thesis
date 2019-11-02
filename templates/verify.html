@@ -72,6 +72,29 @@
         <h6 class="text-center">
           In order to see and verify the details of your vote including the selected candidate, simply paste your Voter Key in the box below and hit the Verify Button!
         </h6>
+
+        <!-- This is the flash messages which is triggered when some user is trying to cast a ballot twice -->
+        {% with messages = get_flashed_messages(category_filter=["no_private_key_fail"]) %} {% if messages %} {%- for
+          message in messages %}
+          <div class="alert alert-danger alert-dismissible fade show mt-2" role="alert">
+            <span>{{ message }}</span>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          {% endfor -%} {% endif %} {% endwith %}
+          <!-- This is the flash messages which is triggered when some user is trying to cast a ballot twice -->
+          {% with messages = get_flashed_messages(category_filter=["wrong_private_key_fail"]) %} {% if messages %} {%- for
+          message in messages %}
+          <div class="alert alert-danger alert-dismissible fade show mt-2" role="alert">
+            <span>{{ message }}</span>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          {% endfor -%} {% endif %} {% endwith %}
+
+
         <form action="{{ url_for('verify') }}" method="POST" id="verify_form">
           <div class="inline-block mt-3">
             <label class="mr-3" for="private_key">Password: </label
@@ -82,26 +105,7 @@
           </div>
         </form>
 
-        <!-- This is the flash messages which is triggered when some user is trying to cast a ballot twice -->
-        {% with messages = get_flashed_messages(category_filter=["no_private_key_fail"]) %} {% if messages %} {%- for
-        message in messages %}
-        <div class="alert alert-danger alert-dismissible fade show mt-2" role="alert">
-          <span>{{ message }}</span>
-          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        {% endfor -%} {% endif %} {% endwith %}
-        <!-- This is the flash messages which is triggered when some user is trying to cast a ballot twice -->
-        {% with messages = get_flashed_messages(category_filter=["wrong_private_key_fail"]) %} {% if messages %} {%- for
-        message in messages %}
-        <div class="alert alert-danger alert-dismissible fade show mt-2" role="alert">
-          <span>{{ message }}</span>
-          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        {% endfor -%} {% endif %} {% endwith %} {% if casted_vote != null %}
+        {% if casted_vote != null %}
         <div class="row mt-5 justify-content-center inline-block">
           <div class="col-lg-8 col-md-10 col-12 block">
             <div class="card text-left">
@@ -281,6 +285,28 @@
         <h6 class="text-center">
           In order to see and verify the details of your vote including the selected candidate, simply paste your Voter Key in the box below and hit the Verify Button!
         </h6>
+
+        <!-- This is the flash messages which is triggered when some user is trying to cast a ballot twice -->
+        {% with messages = get_flashed_messages(category_filter=["no_private_key_fail"]) %} {% if messages %} {%- for
+          message in messages %}
+          <div class="alert alert-danger alert-dismissible fade show mt-2" role="alert">
+            <span>{{ message }}</span>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          {% endfor -%} {% endif %} {% endwith %}
+          <!-- This is the flash messages which is triggered when some user is trying to cast a ballot twice -->
+          {% with messages = get_flashed_messages(category_filter=["wrong_private_key_fail"]) %} {% if messages %} {%- for
+          message in messages %}
+          <div class="alert alert-danger alert-dismissible fade show mt-2" role="alert">
+            <span>{{ message }}</span>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          {% endfor -%} {% endif %} {% endwith %}
+
         <form action="{{ url_for('verify') }}" method="POST" id="verify_form">
           <div class="inline-block mt-3">
             <label class="mr-3" for="private_key">Voter Key: </label
@@ -291,26 +317,7 @@
           </div>
         </form>
 
-        <!-- This is the flash messages which is triggered when some user is trying to cast a ballot twice -->
-        {% with messages = get_flashed_messages(category_filter=["no_private_key_fail"]) %} {% if messages %} {%- for
-        message in messages %}
-        <div class="alert alert-danger alert-dismissible fade show mt-2" role="alert">
-          <span>{{ message }}</span>
-          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        {% endfor -%} {% endif %} {% endwith %}
-        <!-- This is the flash messages which is triggered when some user is trying to cast a ballot twice -->
-        {% with messages = get_flashed_messages(category_filter=["wrong_private_key_fail"]) %} {% if messages %} {%- for
-        message in messages %}
-        <div class="alert alert-danger alert-dismissible fade show mt-2" role="alert">
-          <span>{{ message }}</span>
-          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        {% endfor -%} {% endif %} {% endwith %} {% if casted_vote != null %}
+        {% if casted_vote != null %}
         <div class="row mt-5 justify-content-center vote-block">
           <div class="col-lg-8 col-md-10 col-12 block">
             <div class="card text-left">

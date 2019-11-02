@@ -184,9 +184,8 @@ class User(UserMixin):
     @staticmethod
     def get(user_id):
         voter_query = f"""SELECT *
-                      FROM users
-                      WHERE user_id = {user_id}"""
-        
+                          FROM users
+                          WHERE user_id = {user_id}"""
         
         voter_result = engine.execute(voter_query)
         user = voter_result.first()
@@ -352,8 +351,10 @@ def logout():
 @app.route('/voting/', methods=["GET", "POST"])
 @login_required
 def voting():
+    # Making sure the User logged in with his Nova Account before entering this route
     if request.referrer == None:
         return redirect(url_for("login"))
+    
     if request.method == "GET":
         
         # Getting the voter)id from current_user to render Election information
@@ -571,6 +572,9 @@ def process():
 @app.route('/verification/', methods=["GET", "POST"])
 @login_required
 def verification():
+    # Making sure the User logged in with his Nova Account before entering this route
+    if request.referrer == None:
+        return redirect(url_for("login"))
     
     # Get the version information from the session
     version = session['voter_version']
@@ -624,6 +628,9 @@ def verification():
 @app.route('/verify/', methods=["GET", "POST"])
 @login_required
 def verify():
+    # Making sure the User logged in with his Nova Account before entering this route
+    if request.referrer == None:
+        return redirect(url_for("login"))
     
     # Error Handling in Chrome if there is no existing session
     try:
@@ -704,6 +711,12 @@ def verify():
         verify_vote_results = engine.execute(verify_vote_query)
         verify_vote_result = verify_vote_results.first()
         
+        # Check if there is an entry for the entered private key:
+        if verify_vote_result == None:
+            print('There is no corresponding vote to this private key')
+            flash('There is no corresponding vote to this private key', 'wrong_private_key_fail')
+            return render_template('verify.html', version=version)
+        
         # Query for candidate name
         candidate_query = f"""SELECT name FROM candidates
                               WHERE address = '{verify_vote_result[5]}'"""
@@ -711,22 +724,16 @@ def verify():
         candidate_results = engine.execute(candidate_query)
         candidate_result = candidate_results.first()
         
-        # Check if there is an entry for the entered private key:
-        if verify_vote_result == None:
-            print('There is no corresponding vote to this private key')
-            flash('There is no corresponding vote to this private key', 'wrong_private_key_fail')
-            return render_template('verify.html', version=version)            
-        else:
-            # Create a dictionary with the found transaction:
-            casted_vote = {'hash': verify_vote_result[0],
-                           'previous_hash': verify_vote_result[1],
-                           'nonce': verify_vote_result[2],
-                           'timestamp': verify_vote_result[3],
-                           'from_address': verify_vote_result[4],
-                           'to_address': verify_vote_result[5],
-                           'candidate': candidate_result[0],
-                           'value': verify_vote_result[6],
-                           'signature': verify_vote_result[7],}
+        # Create a dictionary with the found transaction:
+        casted_vote = {'hash': verify_vote_result[0],
+                       'previous_hash': verify_vote_result[1],
+                       'nonce': verify_vote_result[2],
+                       'timestamp': verify_vote_result[3],
+                       'from_address': verify_vote_result[4],
+                       'to_address': verify_vote_result[5],
+                       'candidate': candidate_result[0],
+                       'value': verify_vote_result[6],
+                       'signature': verify_vote_result[7],}
             
         return render_template('verify.html', casted_vote=casted_vote, version=version, blockchain=blockchain)
     
