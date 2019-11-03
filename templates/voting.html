@@ -46,8 +46,11 @@
       </div>
     </div>
 
-    <div class="election-info-wrapper text-center mt-5 mb-5">
-      <div class="container">
+    <div class="election-info-wrapper text-center mb-5">
+      <div class="help text-right" style="margin-right:8px">
+        <a href="/static/help_version_a.pdf" class="btn btn-primary"><i class="fas fa-question-circle"></i><span class="d-none d-sm-inline-block ml-2" style="font-size: 16px">Help</span></a>
+      </div>
+      <div class="container mt-3">
         <div class="election-info text-center">
           <h1 class="mb-3">{{ voter_election['name'] }}</h1>
           <h5>- {{ voter_election['program'] }} -</h4>

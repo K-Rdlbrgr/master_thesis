@@ -59,8 +59,13 @@
 
     <!-- THIS IS VERSION A -->
     {% if version == 'A' %}
-
-    <div class="voter-credentials text-center mt-5 mb-5">
+    <div style="width:100%">
+      <div class="help text-right" style="margin-right:8px">
+        <a href="/static/help_version_a.pdf" class="btn btn-primary"><i class="fas fa-question-circle"></i><span class="d-none d-sm-inline-block ml-2" style="font-size: 16px">Help</span></a>
+      </div>
+    </div>
+    
+    <div class="voter-credentials text-center mb-5">
       <div class="container">
         <div class="number">
           <svg height="100" width="100">
@@ -170,7 +175,13 @@
     <!-- THIS IS VERSION B -->
     {% else %}
 
-    <div class="voter-credentials text-center mt-5 mb-5">
+    <div style="width:100%">
+      <div class="help text-right" style="margin-right:8px">
+        <a href="/static/help_version_b.pdf" class="btn btn-primary"><i class="fas fa-question-circle"></i><span class="d-none d-sm-inline-block ml-2" style="font-size: 16px">Help</span></a>
+      </div>
+    </div>
+
+    <div class="voter-credentials text-center mb-5">
       <div class="container">
         <div class="number">
           <svg height="100" width="100">

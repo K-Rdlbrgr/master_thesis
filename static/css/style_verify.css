@@ -77,6 +77,16 @@ hr {
   fill: black;
 }
 
+.help .btn-primary {
+  background: rgba(27, 27, 27, 0.8);
+  border: rgba(27, 27, 27, 0.8);
+}
+
+.help .btn-primary:hover {
+  background: rgba(27, 27, 27, 0.9);
+  border: rgba(27, 27, 27, 0.8);
+}
+
 .verify-vote-button input {
   background: linear-gradient(12deg, rgba(49, 224, 131, 1) 0%, rgba(25, 205, 227, 1) 200%);
   border-radius: 20px;

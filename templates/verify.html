@@ -27,7 +27,10 @@
     <!-- THIS IS VERSION A -->
     {% if version == 'A' %}
 
-    <div class="two-factor text-center pt-5">
+    <div class="two-factor text-center">
+      <div class="help text-right" style="margin-right:8px">
+        <a href="/static/help_version_a.pdf" class="btn btn-primary"><i class="fas fa-question-circle"></i><span class="d-none d-sm-inline-block ml-2" style="font-size: 16px">Help</span></a>
+      </div>
       <div class="container">
         <div class="number">
           <svg height="100" width="100">
@@ -167,7 +170,10 @@
     <!-- THIS IS VERSION B -->
     {% else %}
 
-    <div class="blockchain text-center pt-5">
+    <div class="blockchain text-center">
+      <div class="help text-right" style="margin-right:8px">
+        <a href="/static/help_version_b.pdf" class="btn btn-primary"><i class="fas fa-question-circle"></i><span class="d-none d-sm-inline-block ml-2" style="font-size: 16px">Help</span></a>
+      </div>
       <div class="container">
         <div class="number">
           <svg height="100" width="100">

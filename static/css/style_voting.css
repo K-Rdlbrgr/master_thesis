@@ -88,7 +88,17 @@ hr.nova-logo {
   background: white;
   color: var(--primary-text-dark);
   width: 100%;
-  margin: 40px 0;
+  margin: 0 0 40px 0;
+}
+
+.help .btn-primary {
+  background: rgba(27, 27, 27, 0.8);
+  border: rgba(27, 27, 27, 0.8);
+}
+
+.help .btn-primary:hover {
+  background: rgba(27, 27, 27, 0.9);
+  border: rgba(27, 27, 27, 0.8);
 }
 
 .select-candidate-wrapper {
