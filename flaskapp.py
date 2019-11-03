@@ -25,6 +25,7 @@ import redis
 # Initializing Flaskapp
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
+app.config['PERMANENT_SESSION_LIFETIME']=datetime.timedelta(minutes=5)
 
 # Setting up Google SignIn Configuration
 # (Used env variables for setting the Google Client ID and Google CLient Secret)
@@ -326,6 +327,9 @@ def callback():
     login_user(user)
     voter_id = current_user.id
     
+    # Enable Session deadline
+    session.permanent = True
+    
     # QUERY to check if this variable corresponding to the already_voted boolean in the vote_check table of the link the user used. If it's false, proceed. If it's true, render the error of not able to vote twice
     already_voted_query = f"""SELECT already_voted FROM vote_check
                               WHERE user_id = '{voter_id}'"""
@@ -514,7 +518,8 @@ def process():
         else:
             flag = True
 
-        #Add the vote to the Blockchain
+        # Add the vote to the Blockchain
+        # The flag checks if any errors occured while creating the vote (e.g signature is missing, difficulty not met)
         if not flag:
             add_vote_query = f"""INSERT INTO votes (hash, previous_hash, nonce, timestamp, from_address, to_address, value, signature)
                                 VALUES ('{new_vote['hash']}', '{new_vote['previous_hash']}', {new_vote['nonce']}, '{new_vote['timestamp']}', '{new_vote['from_address']}', '{new_vote['to_address']}', {new_vote['value']}, '{new_vote['signature']}')"""
@@ -578,6 +583,9 @@ def verification():
     print(request.referrer)
     if request.referrer != VERIFICATION_REQUEST_URL:
         return redirect(url_for("login"))
+    
+    # Reset the Session Timer 
+    session.permanent = True
     
     # Get the version information from the session
     version = session['voter_version']
