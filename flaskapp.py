@@ -22,7 +22,7 @@ import requests
 import redis
 
 
-# Initializing Flaskapp
+# Initializing Flaskapp and setting the timelimit for the Sessions
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
 app.config['PERMANENT_SESSION_LIFETIME']=datetime.timedelta(minutes=5)
@@ -63,7 +63,7 @@ SESSION_TYPE = 'redis'
 app.config.from_object(__name__)
 Session(app)
 
-# OAuth 2 client setup
+# OAuth 2 client setup for the Google SignIn
 client = WebApplicationClient(GOOGLE_CLIENT_ID)
 
 # Flask-Login helper to retrieve a user from our db
@@ -78,7 +78,7 @@ login_manager.login_view = "login"
 
 db = SQLAlchemy(app)
 
-
+# The Users table contains all students eligible to vote in the election table and the id of their corresponding election
 class Users(UserMixin, db.Model):
     __tablename__ = 'users'
     user_id = db.Column(db.Integer, primary_key=True)
@@ -90,7 +90,7 @@ class Users(UserMixin, db.Model):
         self.election_id = election_id
         self.email = email
 
-
+# The Election Table contains all the information being displayed online as well as their start and end time
 class Elections(db.Model):
     __tablename__ = 'elections'
     election_id = db.Column(db.Integer, primary_key=True)
@@ -106,7 +106,7 @@ class Elections(db.Model):
         self.end_time = end_time
         self.program = program
 
-
+# THe Candidates table contains all the information of the candidates such as the user_id and the name as well as the election_id they are candidating for
 class Candidates(db.Model):
     __tablename__ = 'candidates'
     candidate_id = db.Column(db.Integer, primary_key=True)
@@ -125,7 +125,7 @@ class Candidates(db.Model):
         self.program = program
         self.address = address
 
-
+# The Votes Table is the actual Blockchain containing all the information necessary to ensure a secure connection between all the blocks.
 class Votes(db.Model):
     __tablename__ = 'votes'
     hash = db.Column(db.String(64), primary_key=True)
@@ -147,7 +147,7 @@ class Votes(db.Model):
         self.value = 1
         self.signature = signature
         
-# Proposed Solution for Double Spending
+# The Vote_Check table is set up ahead of the elections and stores the correct version the user got directed to as well as the Boolean if the user already voted or not
 class vote_check(db.Model):
     __tablename__ = 'vote_check'
     vote_check_id = db.Column(db.Integer, primary_key=True)
@@ -162,7 +162,8 @@ class vote_check(db.Model):
         self.election_id = election_id
         self.already_voted = False
         self.version = version
-        
+
+# The Version_Control table has one row for each election and the corresponding last version of the app which was directed to a user. It is therefore crucial for making sure we get a balanced sample in the end
 class version_control(db.Model):
     __tablename__ = 'version_control'
     version_control_id = db.Column(db.Integer, primary_key=True)
@@ -174,7 +175,7 @@ class version_control(db.Model):
         self.latest_version = latest_version
         self.election_id = election_id
         
-# Establish class for the Login_Manager
+# Establish a User class with the Flask module UserMixin which is used to support the Google SignIn
 
 class User(UserMixin):
     def __init__(self, id, election_id, email):
@@ -201,25 +202,26 @@ class User(UserMixin):
         return user
 
 # Functions considering Google SignIn
-
 # Retrieving User Data from Google
 def get_google_provider_cfg():
     return requests.get(GOOGLE_DISCOVERY_URL).json()
 
-# Set Difficulty-Level for the Blockchain
-
+# Set Difficulty-Level for the Blockchain which makes sure we always have at least 3 0s in front of each hash
 difficulty = 3
 
-# Now we establish all functions which we need for creating and interacting with the Blockchain. So far, we just have every function connected to casting a vote (including providing a specified security level, hashing and so on). We still need to integrate the tallying function.
+# Now we establish all functions which we need for creating and interacting with the Blockchain. So far, we just have every function connected to casting a vote (including providing a specified security level, hashing and so on). We still need to integrate the tallying function. The functions are leveraging the Bitcoin Module imported earlier
 
+# This function calculates the Hash of a vote by taking all the information of a vote as inputs
 def calculateHash(vote):
         return sha256((vote['previous_hash'] + vote['from_address'] + vote['to_address'] + str(vote['nonce']) + str(vote['value']) + str(vote['timestamp'])).encode('utf-8'))
-    
+ 
+# This function enables the minimum security(difficulty) level set earlier in the process. Increasing the difficulty level makes this process exponentially harder and longer   
 def secureHash(vote, difficulty):
         while vote['hash'][0:difficulty] != ''.join(['0' for i in range(0, difficulty)]):
             vote['nonce'] += 1
             vote['hash'] = calculateHash(vote)
-            
+ 
+# This functions signs each vote with the user's private key to enable future verification
 def signVote(vote, signingKey):
         if privtoaddr(signingKey) != vote['from_address']:
             print('You cannot sign transactions for other wallets!')
@@ -229,6 +231,7 @@ def signVote(vote, signingKey):
             vote['signature'] = sig
             return True
 
+# This function is called each time a vote is about to be added to the Blockchain in order to finally check if the vote has a signature and addresses. It can also be called at any time in the future in order to verify if a vote is still valid
 def isValid(vote, pubkey):
         if vote['from_address'] == None:
             return True
@@ -243,6 +246,7 @@ def isValid(vote, pubkey):
 
 # DB CONNECTION
 
+# Creating the SQLAlchemy engine with an connnection pool of 20 to enable querying within the routes
 engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
 
 # ROUTES
@@ -268,7 +272,7 @@ def login():
     )
     return redirect(request_uri)
 
-# Callback address from Google SignIn (Possibly our Voting Page later on in the process)
+# Callback address from Google SignIn
 @app.route("/login/callback")
 def callback():
     # Get authorization code Google sent back to you
@@ -294,7 +298,7 @@ def callback():
     # Parse the tokens!
     client.parse_request_body_response(json.dumps(token_response.json()))
     
-    # Now that you have tokens (yay) let's find and hit the URL
+    # Now that you have tokens, let's find and hit the URL
     # from Google that gives you the user's profile information,
     # including their Google profile image and email
     userinfo_endpoint = google_provider_cfg["userinfo_endpoint"]
@@ -304,6 +308,7 @@ def callback():
     # You want to make sure their email is verified.
     # The user authenticated with Google, authorized your
     # app, and now you've verified their email through Google!
+    # We are also extracting the student-id based on the email
     if userinfo_response.json().get("email_verified"):
         unique_id = userinfo_response.json()["sub"]
         student_id = userinfo_response.json()["email"][0:5]
@@ -319,13 +324,15 @@ def callback():
         
     voter_result = engine.execute(voter_query)
     voter = voter_result.first()
+    
+    # If the User is part of the Whitelist, pass the voter into the User class and create an user object
     user = User(voter[0], voter[1], voter[2])
         
     # Begin user session by logging the user in
     login_user(user)
     voter_id = current_user.id
     
-    # Enable Session deadline
+    # Start the Session Timeout Timer 
     session.permanent = True
     
     # QUERY to check if this variable corresponding to the already_voted boolean in the vote_check table of the link the user used. If it's false, proceed. If it's true, render the error of not able to vote twice
@@ -335,22 +342,23 @@ def callback():
     already_voted_results = engine.execute(already_voted_query)
     for r in already_voted_results:
         already_voted = r[0]
+    # Close the ResultProxy to not risk open and unused DB connections
     already_voted_results.close()
 
-    # Send user back to homepage
+    # Send user back to the application based on his voting status
     if already_voted == False:  
         return redirect(url_for("voting"))
     else:
         return redirect(url_for("verify"))
 
-# Current Logout function for the Session
+# Current Logout function for the Session (not in use so far since we are using session lifetime)
 @app.route("/logout")
 @login_required
 def logout():
     logout_user()
     return redirect(url_for("login"))
 
-# Central Voting Page
+# CENTRAL VOTING PAGE
 
 @app.route('/voting/', methods=["GET", "POST"])
 @login_required
@@ -386,17 +394,20 @@ def voting():
         
         election_candidates_results = engine.execute(election_candidates_query)
         election_candidates = []
+        
+        # Also integrating a number key in the dictionary which is used in the HTML to distinguish radio buttons
         i = 1
         for candidate in election_candidates_results:
             election_candidates.append({"name": candidate[0],
                                         "number": i})
             i += 1
+        # Close the ResultProxy to not risk open and unused DB connections
         election_candidates_results.close()
         
         return render_template('voting.html', election_candidates=election_candidates, voter_election=voter_election)
     
-# Process Page
-
+# PROCESS PAGE
+# This is were the User is redirected to after submitting their vote in the Voting Route
 @app.route('/process/', methods=["GET", "POST"])
 @login_required
 def process():
@@ -411,6 +422,7 @@ def process():
     already_voted_results = engine.execute(already_voted_query)
     for r in already_voted_results:
         already_voted = r[0]
+    # Close the ResultProxy to not risk open and unused DB connections
     already_voted_results.close()
     
     # Checking if the voter already voted and in case he did, render the pocess.html by passing in the corresponding error
@@ -443,11 +455,12 @@ def process():
     # Continuing with the Voting Process in case the user passes the first two crucial checks
     if request.method == "POST":
         
-        # Creating User's KeyPair/Address and corresponding Sessions
+        # Creating User's KeyPair/Address and corresponding Sessions based on the Bitcoin Module
         user_privateKey = random_key()
         user_publicKey = privtopub(user_privateKey)
         user_address = pubtoaddr(user_publicKey)
         
+        # Passing those Values in the current session to transfer them to the next route hidden from the user
         session['user_privateKey'] = user_privateKey
         session['user_publicKey'] = user_publicKey
         session['user_address'] = user_address
@@ -464,6 +477,7 @@ def process():
         hash_results = engine.execute(hash_query)
         for r in hash_results:
             previous_hash = r[0]
+        # Close the ResultProxy to not risk open and unused DB connections
         hash_results.close()        
             
         # Querying the database to find the address of the candidate    
@@ -473,6 +487,7 @@ def process():
         address_results = engine.execute(address_query)
         for r in address_results:
             address = r[0]
+        # Close the ResultProxy to not risk open and unused DB connections
         address_results.close()        
             
         # Creating the vote as a dictionary to later add to the Blockchain
@@ -497,6 +512,7 @@ def process():
             if not len(r) == 0:
                 print('Cannot vote twice')
                 flag = True
+        # Close the ResultProxy to not risk open and unused DB connections
         vote_twice_results.close() 
 
         #Check if both from and to address are given in the transaction
@@ -504,7 +520,7 @@ def process():
             print('Transaction must include from and to address')
             flag = True
         
-        # Calculate the hash based on the information and secure it
+        # Calculate the hash based on the information and secure it based on difficulty level
         new_vote['hash'] = calculateHash(new_vote)
         secureHash(new_vote, difficulty)
         
@@ -523,7 +539,7 @@ def process():
                                 VALUES ('{new_vote['hash']}', '{new_vote['previous_hash']}', {new_vote['nonce']}, '{new_vote['timestamp']}', '{new_vote['from_address']}', '{new_vote['to_address']}', {new_vote['value']}, '{new_vote['signature']}')"""
                     
             engine.execute(add_vote_query)
-            print('Transaction on the CHAIN')
+            print('Transaction on the Blockchain')
             
             # Add QUERY to switch boolean of already_voted in the vote_check table from False to True 
             update_already_voted_query = f"""UPDATE vote_check
@@ -533,6 +549,7 @@ def process():
             engine.execute(update_already_voted_query)
             print('The already_voted status got updated')
             
+            # Here the Version Control for the A/B Testing starts
             # Check which version was the last version
             latest_version_query = f"""SELECT latest_version
                                        FROM version_control as v
@@ -552,7 +569,7 @@ def process():
                 voter_version = 'A'
                 session['voter_version']=voter_version
             
-            # Update the database
+            # Update the database with the latest_version
             update_latest_version_query = f"""UPDATE version_control
                                               SET latest_version = '{voter_version}'
                                               FROM version_control AS v
@@ -570,7 +587,12 @@ def process():
                     
             engine.execute(update_version_query)
                 
-        return redirect(url_for('verification'))
+            return redirect(url_for('verification'))
+        
+        # If an Error occured somewhere along the isValid process the user will get a corresponding Error message
+        else:
+            message = 'Something went wrong while you were trying to cast your vote. To further investigate and solve this issue, please send an email to our support: 34638@novasbe.pt'
+            return render_template('process.html', message = message) 
 
 # Verification Page
 
@@ -582,7 +604,7 @@ def verification():
     if request.referrer != VERIFICATION_REQUEST_URL:
         return redirect(url_for("login"))
     
-    # Reset the Session Timer 
+    # Reset the Session Timer to grnt the User a maximum of 5 minutes before he has to login again for security reasons
     session.permanent = True
     
     # Get the version information from the session
@@ -601,7 +623,7 @@ def verification():
     
     blockchain_results = engine.execute(blockchain_query)
     
-    # Adding one block to the blockchain for every vote
+    # Adding one block to the blockchain for every vote including a color for every hash and previous hash which will be used to visually emphazise the connections between each vote on the Blockchain
     counter = 0
     color_counter = 0
     previous_color_counter = 7
@@ -629,7 +651,7 @@ def verification():
         color_counter += 1
         previous_color_counter += 1
         
-    # Closing ResultProxy
+    # Close the ResultProxy to not risk open and unused DB connections
     blockchain_results.close()
     
     return render_template('verification.html',user_address=user_address, user_publicKey=user_publicKey, user_privateKey=user_privateKey, version=version, blockchain=blockchain)
@@ -648,7 +670,7 @@ def verify():
     except KeyError:
         voter_id = current_user.id
         
-        # Query the corresponding version to render
+        # Query the corresponding version(A/B) to render for each user
         version_control_query = f"""SELECT version
                                     FROM vote_check
                                     WHERE user_id = {voter_id}"""
@@ -663,7 +685,9 @@ def verify():
         print(f'We are n the Verify Page and the version is {version}')
         print(f'We are n the Verify Page and the voter_id is {voter_id}')
         
+    # The system distinguishes between a user coming from the Google SignIn or the verification/verify route since coming from the latter means the system has to perform the Verify Your Vote feature
     if request.method == "POST":
+        
         # Create empty list for Blockchain which will result in a list of dictionaries
         blockchain = []
         
@@ -672,7 +696,7 @@ def verify():
         
         blockchain_results = engine.execute(blockchain_query)
         
-        # Adding one block to the blockchain for every vote
+        # Adding one block to the blockchain for every vote including a color for every hash and previous hash which will be used to visually emphazise the connections between each vote on the Blockchain
         counter = 0
         color_counter = 0
         previous_color_counter = 7
@@ -700,20 +724,22 @@ def verify():
             color_counter += 1
             previous_color_counter += 1
         
-        # Closing ResultProxy
+        # Close the ResultProxy to not risk open and unused DB connections
         blockchain_results.close()
         
+        # Getting the user input of the verify your vote form which should be their private key
         req = request.form
         
-        # Use the private key to generate the corresponding address
+        # Use the private key to generate the corresponding address in case of a string that is actually 64 characters long
         if len(req['private_key']) == 64:
             vote_from_address = privtoaddr(req['private_key'])
         else:
+            # Pass along a flash message to the HTML if this error occurs
             print('This is not a private key')
             flash('This is not a private key', 'no_private_key_fail')
             return render_template('verify.html')
         
-        # QUERY to find the correct transaction based on the address
+        # QUERY to find the correct transaction based on the address (address is unique, so there will be a maximum of one row)
         verify_vote_query = f"""SELECT * FROM votes
                                 WHERE from_address = '{vote_from_address}'"""
         
@@ -722,6 +748,7 @@ def verify():
         
         # Check if there is an entry for the entered private key:
         if verify_vote_result == None:
+            # Pass along a flash message to the HTML if this error occurs
             print('There is no corresponding vote to this private key')
             flash('There is no corresponding vote to this private key', 'wrong_private_key_fail')
             return render_template('verify.html', version=version)
@@ -732,6 +759,8 @@ def verify():
         
         candidate_results = engine.execute(candidate_query)
         candidate_result = candidate_results.first()
+        
+        # If the user input actually matches with a private key used for casting a vote which is on the Blockchain, the system found the vote and stored the data into a variable. That is now used to create a dictionary which is passed along to the HTML
         
         # Create a dictionary with the found transaction:
         casted_vote = {'hash': verify_vote_result[0],
@@ -755,7 +784,7 @@ def verify():
         
         blockchain_results = engine.execute(blockchain_query)
         
-        # Adding one block to the blockchain for every vote
+        # Adding one block to the blockchain for every vote including a color for every hash and previous hash which will be used to visually emphazise the connections between each vote on the Blockchain
         counter = 0
         color_counter = 0
         previous_color_counter = 7
@@ -783,11 +812,12 @@ def verify():
             color_counter += 1
             previous_color_counter += 1
             
-        # Closing ResultProxy
+        # Close the ResultProxy to not risk open and unused DB connections
         blockchain_results.close()
         
         return render_template('verify.html', version=version, blockchain=blockchain)
 
+# Before running the app we check in which mdoe (development/production) we are
 if ENV == 'dev':
     if __name__ == "__main__":
         app.run(ssl_context='adhoc')
