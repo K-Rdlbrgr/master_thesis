@@ -153,15 +153,13 @@ class vote_check(db.Model):
     vote_check_id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
     election_id = db.Column(db.Integer, db.ForeignKey('elections.election_id'))
-    link = db.Column(db.String(300), unique=True)
     already_voted = db.Column(db.Boolean)
     version = db.Column(db.String(1))
     
-    def __init__(self, vote_check_id, user_id, election_id, link, already_voted, version):
+    def __init__(self, vote_check_id, user_id, election_id, already_voted, version):
         self.vote_check_id = vote_check_id
         self.user_id = user_id
         self.election_id = election_id
-        self.link = link
         self.already_voted = False
         self.version = version
         
