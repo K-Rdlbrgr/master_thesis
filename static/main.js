@@ -28,9 +28,27 @@ $('#myModal').on('shown.bs.modal', function() {
 });
 
 if (!document.location.hash) {
-  document.location.hash = 'vote-section';
+  document.location.hash = 'check';
 }
 
 var element = $('.scrolling-wrapper-flexbox').get(0);
 var left = element.scrollWidth;
 element.scrollLeft = left;
+
+// Confirmation Display on Voting.html
+
+function confirmFunction() {
+  var rad = document.vote_form.candidate;
+  var prev = null;
+  for (var i = 0; i < rad.length; i++) {
+    rad[i].addEventListener('change', function() {
+      prev ? console.log(prev.value) : null;
+      if (this !== prev) {
+        prev = this;
+      }
+      console.log(this.value);
+      document.getElementById('confirmation').innerHTML = this.value;
+      document.getElementById('confirmation_info').innerHTML = '<hr> Your selected candidate:';
+    });
+  }
+}
