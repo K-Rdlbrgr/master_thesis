@@ -1,5 +1,5 @@
-## Online Voting System of Nova SBE, Lisboa
-# Powered by the Data Science Knowledge Center DSKC 
+# Online Voting System of Nova SBE, Lisboa
+## Powered by the Data Science Knowledge Center DSKC 
 
 This repository contains all and solely the code for our blockchain-based online voting application Votechain.
 Votechain allows you to hold elections in a secure, anonymous and fully transparent manner leveraging blockchain technology. 
