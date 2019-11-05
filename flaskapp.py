@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, url_for, redirect, flash, ses
 from flask_session import Session
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import *
+from sqlalchemy.orm import sessionmaker
 from bitcoin import *
 from oauthlib.oauth2 import WebApplicationClient
 from redis import Redis
@@ -25,7 +26,7 @@ import redis
 # Initializing Flaskapp and setting the timelimit for the Sessions
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
-app.config['PERMANENT_SESSION_LIFETIME']=datetime.timedelta(minutes=5)
+app.config['PERMANENT_SESSION_LIFETIME']=datetime.timedelta(minutes=1)
 
 # Setting up Google SignIn Configuration
 # (Used env variables for setting the Google Client ID and Google CLient Secret)
@@ -248,6 +249,7 @@ def isValid(vote, pubkey):
 
 # Creating the SQLAlchemy engine with an connnection pool of 20 to enable querying within the routes
 engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
+Session = sessionmaker(bind=engine)
 
 # ROUTES
 
@@ -465,21 +467,21 @@ def process():
         session['user_publicKey'] = user_publicKey
         session['user_address'] = user_address
         
+        # ------------------------
+        sess = Session()
+        try:
+            voter_result = sess.execute(voter_query)
+            voter = voter_result.first()
+        except:
+            sess.rollback()
+        finally:
+            sess.close()
+        # ------------------------
+        
         # Accessing the input data from the User
         req = request.form
         candidate = req['candidate']
         
-        # Querying the database to find the previous hash
-        hash_query = """SELECT hash FROM votes
-                        ORDER BY timestamp DESC
-                        LIMIT 1"""
-                    
-        hash_results = engine.execute(hash_query)
-        for r in hash_results:
-            previous_hash = r[0]
-        # Close the ResultProxy to not risk open and unused DB connections
-        hash_results.close()        
-            
         # Querying the database to find the address of the candidate    
         address_query = f"""SELECT address FROM candidates
                             WHERE name = '{candidate}'""" #{candidate}
@@ -488,24 +490,14 @@ def process():
         for r in address_results:
             address = r[0]
         # Close the ResultProxy to not risk open and unused DB connections
-        address_results.close()        
-            
-        # Creating the vote as a dictionary to later add to the Blockchain
-        new_vote = {'hash':'',
-                    'previous_hash': previous_hash,
-                    'nonce':0,
-                    'timestamp':datetime.datetime.now(),
-                    'from_address': user_address,
-                    'to_address': address,
-                    'value':1,
-                    'signature': ''} 
+        address_results.close()
         
         # Set error flag to false before checking for errors
         flag = False
         
         # Checking the blockchain if there is already a vote of the same address
         vote_twice_query = f"""SELECT * FROM votes
-                            WHERE from_address = '{new_vote['from_address']}'"""
+                            WHERE from_address = '{user_address}'"""
                     
         vote_twice_results = engine.execute(vote_twice_query)
         for r in vote_twice_results:
@@ -516,35 +508,73 @@ def process():
         vote_twice_results.close() 
 
         #Check if both from and to address are given in the transaction
-        if new_vote['from_address'] == None or new_vote['to_address'] == None:
+        if user_address == None or address == None:
             print('Transaction must include from and to address')
             flag = True
         
-        # Calculate the hash based on the information and secure it based on difficulty level
-        new_vote['hash'] = calculateHash(new_vote)
-        secureHash(new_vote, difficulty)
         
-        # Sign the transaction and check if the transaction is valid
-        if signVote(new_vote, user_privateKey):
-            if not isValid(new_vote, user_publicKey):
-                print('Cannot add invalid transaction to chain')
-                flag = True
-        else:
-            flag = True
-
-        # Add the vote to the Blockchain
-        # The flag checks if any errors occured while creating the vote (e.g signature is missing, difficulty not met)
-        if not flag:
-            add_vote_query = f"""INSERT INTO votes (hash, previous_hash, nonce, timestamp, from_address, to_address, value, signature)
-                                VALUES ('{new_vote['hash']}', '{new_vote['previous_hash']}', {new_vote['nonce']}, '{new_vote['timestamp']}', '{new_vote['from_address']}', '{new_vote['to_address']}', {new_vote['value']}, '{new_vote['signature']}')"""
-                    
-            engine.execute(add_vote_query)
-            print('Transaction on the Blockchain')
+        # ------------------------------------------------------------------------------
+        sess = Session()
+        try:
+        
+            # Querying the database to find the previous hash
+            hash_query = """SELECT hash FROM votes
+                            ORDER BY timestamp DESC
+                            LIMIT 1"""
+                        
+            hash_results = sess.execute(hash_query)
+            for r in hash_results:
+                previous_hash = r[0]
+            # Close the ResultProxy to not risk open and unused DB connections
+            hash_results.close()               
+                
+            # Creating the vote as a dictionary to later add to the Blockchain
+            new_vote = {'hash':'',
+                        'previous_hash': previous_hash,
+                        'nonce':0,
+                        'timestamp':datetime.datetime.now(),
+                        'from_address': user_address,
+                        'to_address': address,
+                        'value':1,
+                        'signature': ''} 
             
+            # Calculate the hash based on the information and secure it based on difficulty level
+            new_vote['hash'] = calculateHash(new_vote)
+            secureHash(new_vote, difficulty)
+            
+            # Sign the transaction and check if the transaction is valid
+            if signVote(new_vote, user_privateKey):
+                if not isValid(new_vote, user_publicKey):
+                    print('Cannot add invalid transaction to chain')
+                    flag = True
+            else:
+                flag = True
+
+            # Add the vote to the Blockchain
+            # The flag checks if any errors occured while creating the vote (e.g signature is missing, difficulty not met)
+            if not flag:
+                add_vote_query = f"""INSERT INTO votes (hash, previous_hash, nonce, timestamp, from_address, to_address, value, signature)
+                                    VALUES ('{new_vote['hash']}', '{new_vote['previous_hash']}', {new_vote['nonce']}, '{new_vote['timestamp']}', '{new_vote['from_address']}', '{new_vote['to_address']}', {new_vote['value']}, '{new_vote['signature']}')"""
+                        
+                sess.execute(add_vote_query)
+                sess.commit()
+                print('Transaction on the Blockchain')
+                # ------------------------------------------------------------------------------
+                
+        except:
+            sess.rollback()
+            raise
+        finally:
+            sess.close()  
+            
+        if not flag:      
+                
+            # ------------------------------------------------------------------------------
+    
             # Add QUERY to switch boolean of already_voted in the vote_check table from False to True 
             update_already_voted_query = f"""UPDATE vote_check
-                                             SET already_voted = True
-                                             WHERE user_id = {voter_id}"""
+                                            SET already_voted = True
+                                            WHERE user_id = {voter_id}"""
                     
             engine.execute(update_already_voted_query)
             print('The already_voted status got updated')
@@ -552,10 +582,10 @@ def process():
             # Here the Version Control for the A/B Testing starts
             # Check which version was the last version
             latest_version_query = f"""SELECT latest_version
-                                       FROM version_control as v
-                                       INNER JOIN users as u
-                                       ON v.election_id = u.election_id
-                                       WHERE user_id = {voter_id}"""
+                                    FROM version_control as v
+                                    INNER JOIN users as u
+                                    ON v.election_id = u.election_id
+                                    WHERE user_id = {voter_id}"""
                     
             latest_version_results = engine.execute(latest_version_query)
             latest_version_result = latest_version_results.first()
@@ -571,19 +601,19 @@ def process():
             
             # Update the database with the latest_version
             update_latest_version_query = f"""UPDATE version_control
-                                              SET latest_version = '{voter_version}'
-                                              FROM version_control AS v
-                                              INNER JOIN users AS u
-                                              ON v.election_id = u.election_id
-                                              WHERE user_id = {voter_id}"""
-                  
+                                            SET latest_version = '{voter_version}'
+                                            FROM version_control AS v
+                                            INNER JOIN users AS u
+                                            ON v.election_id = u.election_id
+                                            WHERE user_id = {voter_id}"""
+                
             engine.execute(update_latest_version_query)
             print('The latest_version status got updated')
             
             # Update the used version for the voter in the database
             update_version_query = f"""UPDATE vote_check
-                                       SET version = '{voter_version}'
-                                       WHERE user_id = {voter_id}"""
+                                    SET version = '{voter_version}'
+                                    WHERE user_id = {voter_id}"""
                     
             engine.execute(update_version_query)
                 
@@ -592,8 +622,15 @@ def process():
         # If an Error occured somewhere along the isValid process the user will get a corresponding Error message
         else:
             message = 'Something went wrong while you were trying to cast your vote. To further investigate and solve this issue, please send an email to our support: 34638@novasbe.pt'
-            return render_template('process.html', message = message) 
-
+            return render_template('process.html', message = message)
+        
+        # ------------------------------------------------------------------------------
+        # except:
+        #     sess.rollback()
+        #     raise
+        # finally:
+        #     sess.close()
+        
 # Verification Page
 
 @app.route('/verification/', methods=["GET", "POST"])
@@ -737,7 +774,7 @@ def verify():
             # Pass along a flash message to the HTML if this error occurs
             print('This is not a private key')
             flash('This is not a private key', 'no_private_key_fail')
-            return render_template('verify.html')
+            return render_template('verify.html', version=version, blockchain=blockchain)
         
         # QUERY to find the correct transaction based on the address (address is unique, so there will be a maximum of one row)
         verify_vote_query = f"""SELECT * FROM votes
@@ -751,7 +788,7 @@ def verify():
             # Pass along a flash message to the HTML if this error occurs
             print('There is no corresponding vote to this private key')
             flash('There is no corresponding vote to this private key', 'wrong_private_key_fail')
-            return render_template('verify.html', version=version)
+            return render_template('verify.html', version=version, blockchain=blockchain)
         
         # Query for candidate name
         candidate_query = f"""SELECT name FROM candidates
