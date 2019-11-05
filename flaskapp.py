@@ -26,7 +26,7 @@ import redis
 # Initializing Flaskapp and setting the timelimit for the Sessions
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
-app.config['PERMANENT_SESSION_LIFETIME']=datetime.timedelta(minutes=1)
+app.config['PERMANENT_SESSION_LIFETIME']=datetime.timedelta(minutes=5)
 
 # Setting up Google SignIn Configuration
 # (Used env variables for setting the Google Client ID and Google CLient Secret)
