@@ -41,7 +41,7 @@ login_manager.init_app(app)
 
 # We introduce the ENV variable to quickly switch on and off debug mode depending on if we just want to develop the app or deploy and use it. It also sets the connection to our postgres database
 
-ENV = 'dev'
+ENV = 'prod'
 
 if ENV == 'dev':
     app.debug = True
