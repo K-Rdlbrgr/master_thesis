@@ -41,11 +41,11 @@ login_manager.init_app(app)
 
 # We introduce the ENV variable to quickly switch on and off debug mode depending on if we just want to develop the app or deploy and use it. It also sets the connection to our postgres database
 
-ENV = 'prod'
+ENV = 'dev'
 
 if ENV == 'dev':
     app.debug = True
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:thesis@localhost/master_thesis'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://postgres:thesis@localhost/master_thesis'
     GOOGLE_REDIRECT_ADDRESS = "https://127.0.0.1:5000/login/callback"
     VERIFICATION_REQUEST_URL = "https://127.0.0.1:5000/voting/"
     
@@ -130,7 +130,7 @@ class Candidates(db.Model):
 class Votes(db.Model):
     __tablename__ = 'votes'
     hash = db.Column(db.String(64), primary_key=True)
-    previous_hash = db.Column(db.String(64))
+    previous_hash = db.Column(db.String(64), unique=True)
     nonce = db.Column(db.Integer)
     timestamp = db.Column(db.TIMESTAMP)
     from_address = db.Column(db.String(300))
@@ -407,6 +407,17 @@ def voting():
         election_candidates_results.close()
         
         return render_template('voting.html', election_candidates=election_candidates, voter_election=voter_election)
+
+# @app.route('/test/')
+# def test():
+#     session = Session()
+
+
+# @app.route('/test/<password>/<electionId>', methods=["GET"])
+# def test():
+#     block
+    
+    
     
 # PROCESS PAGE
 # This is were the User is redirected to after submitting their vote in the Voting Route
@@ -467,24 +478,13 @@ def process():
         session['user_publicKey'] = user_publicKey
         session['user_address'] = user_address
         
-        # ------------------------
-        sess = Session()
-        try:
-            voter_result = sess.execute(voter_query)
-            voter = voter_result.first()
-        except:
-            sess.rollback()
-        finally:
-            sess.close()
-        # ------------------------
-        
         # Accessing the input data from the User
         req = request.form
         candidate = req['candidate']
         
         # Querying the database to find the address of the candidate    
         address_query = f"""SELECT address FROM candidates
-                            WHERE name = '{candidate}'""" #{candidate}
+                            WHERE name = '{candidate}'"""
         
         address_results = engine.execute(address_query)
         for r in address_results:
@@ -497,7 +497,7 @@ def process():
         
         # Checking the blockchain if there is already a vote of the same address
         vote_twice_query = f"""SELECT * FROM votes
-                            WHERE from_address = '{user_address}'"""
+                               WHERE from_address = '{user_address}'"""
                     
         vote_twice_results = engine.execute(vote_twice_query)
         for r in vote_twice_results:
@@ -512,17 +512,20 @@ def process():
             print('Transaction must include from and to address')
             flag = True
         
+        # Creating a transaction to ensure jsut one block gets added at a time, to eliminate the chance of breaking the Blockchain
+        connection = engine.connect()
+        trans = connection.begin()    
         
-        # ------------------------------------------------------------------------------
-        sess = Session()
         try:
-        
+            # Locking the Votes table before entering the critical querys for the block generation
+            connection.execute('LOCK TABLE votes IN ACCESS EXCLUSIVE MODE;')
+            
             # Querying the database to find the previous hash
             hash_query = """SELECT hash FROM votes
                             ORDER BY timestamp DESC
                             LIMIT 1"""
                         
-            hash_results = sess.execute(hash_query)
+            hash_results = connection.execute(hash_query)
             for r in hash_results:
                 previous_hash = r[0]
             # Close the ResultProxy to not risk open and unused DB connections
@@ -556,20 +559,22 @@ def process():
                 add_vote_query = f"""INSERT INTO votes (hash, previous_hash, nonce, timestamp, from_address, to_address, value, signature)
                                     VALUES ('{new_vote['hash']}', '{new_vote['previous_hash']}', {new_vote['nonce']}, '{new_vote['timestamp']}', '{new_vote['from_address']}', '{new_vote['to_address']}', {new_vote['value']}, '{new_vote['signature']}')"""
                         
-                sess.execute(add_vote_query)
-                sess.commit()
+                connection.execute(add_vote_query)
+                # Commiting the changes which also Unlocks the votes table again
+                trans.commit()
                 print('Transaction on the Blockchain')
-                # ------------------------------------------------------------------------------
-                
+        
+        # In case an error occured during the TRY, the transaction gets rolled back   
         except:
-            sess.rollback()
-            raise
+            trans.rollback()
+            print('Got an except')
+            
+        # Finally the transaction gets closed to ensure no open idle connections
         finally:
-            sess.close()  
+            trans.close()
+            print('I was here')
             
         if not flag:      
-                
-            # ------------------------------------------------------------------------------
     
             # Add QUERY to switch boolean of already_voted in the vote_check table from False to True 
             update_already_voted_query = f"""UPDATE vote_check
@@ -624,12 +629,6 @@ def process():
             message = 'Something went wrong while you were trying to cast your vote. To further investigate and solve this issue, please send an email to our support: 34638@novasbe.pt'
             return render_template('process.html', message = message)
         
-        # ------------------------------------------------------------------------------
-        # except:
-        #     sess.rollback()
-        #     raise
-        # finally:
-        #     sess.close()
         
 # Verification Page
 
@@ -656,7 +655,9 @@ def verification():
     blockchain = []
     
     # Query data for visualizing the Blockchain
-    blockchain_query = "SELECT * FROM votes" 
+    blockchain_query = """SELECT * 
+                          FROM votes
+                          ORDER BY timestamp"""
     
     blockchain_results = engine.execute(blockchain_query)
     
@@ -729,7 +730,9 @@ def verify():
         blockchain = []
         
         # Query data for visualizing the Blockchain
-        blockchain_query = "SELECT * FROM votes" 
+        blockchain_query = """SELECT * 
+                              FROM votes
+                              ORDER BY timestamp""" 
         
         blockchain_results = engine.execute(blockchain_query)
         
@@ -817,7 +820,9 @@ def verify():
         blockchain = []
         
         # Query data for visualizing the Blockchain
-        blockchain_query = "SELECT * FROM votes" 
+        blockchain_query = """SELECT * 
+                              FROM votes
+                              ORDER BY timestamp""" 
         
         blockchain_results = engine.execute(blockchain_query)
         
