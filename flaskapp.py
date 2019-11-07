@@ -407,18 +407,7 @@ def voting():
         # Close the ResultProxy to not risk open and unused DB connections
         election_candidates_results.close()
         
-        return render_template('voting.html', election_candidates=election_candidates, voter_election=voter_election)
-
-# @app.route('/test/')
-# def test():
-#     session = Session()
-
-
-# @app.route('/test/<password>/<electionId>', methods=["GET"])
-# def test():
-#     block
-    
-    
+        return render_template('voting.html', election_candidates=election_candidates, voter_election=voter_election)   
     
 # PROCESS PAGE
 # This is were the User is redirected to after submitting their vote in the Voting Route
