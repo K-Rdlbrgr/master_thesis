@@ -26,7 +26,7 @@ import redis
 # Initializing Flaskapp and setting the timelimit for the Sessions
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
-app.config['PERMANENT_SESSION_LIFETIME']=datetime.timedelta(minutes=5)
+app.config['PERMANENT_SESSION_LIFETIME']=datetime.timedelta(minutes=10)
 
 # Setting up Google SignIn Configuration
 # (Used env variables for setting the Google Client ID and Google CLient Secret)
@@ -313,6 +313,7 @@ def callback():
     # We are also extracting the student-id based on the email
     if userinfo_response.json().get("email_verified"):
         unique_id = userinfo_response.json()["sub"]
+        print(f'This is my Google ID {unique_id}')
         student_id = userinfo_response.json()["email"][0:5]
         users_email = userinfo_response.json()["email"]
         
