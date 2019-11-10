@@ -111,8 +111,7 @@ class Elections(db.Model):
 class Candidates(db.Model):
     __tablename__ = 'candidates'
     candidate_id = db.Column(db.Integer, primary_key=True)
-    election_id = db.Column(
-    db.Integer, db.ForeignKey('elections.election_id'))
+    election_id = db.Column(db.Integer, db.ForeignKey('elections.election_id'))
     list = db.Column(db.String(10))
     name = db.Column(db.String(100))
     program = db.Column(db.String(200))
