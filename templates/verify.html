@@ -177,7 +177,7 @@
         <h2>THE VOTING BLOCKCHAIN</h2>
         <hr />
         <h6 class="mb-5">
-          The illustration below shows this system’s blockchain, which contains all casted votes in an encrypted and anonymous manner. One block means one vote. To encrypt the vote, each block includes a hash and the previous block’s hash, which are security numbers randomly calculated from the vote’s data. Including both, current and previous hash, creates a chain between all the votes which protects them from unnoticed tampering. Moreover, you can see the encrypted voter address. Feel free to search for your own vote in the Blockchain, identifiable by matching your From Address, which you will find in step 3.
+          The illustration below shows this system’s blockchain, which contains all casted votes in an encrypted and anonymous manner. One block means one vote. To encrypt the vote, each block includes a hash and the previous block’s hash, which are security numbers randomly calculated from the vote’s data. Storing the new and previous hash in each vote creates a connection between all of them which protects the whole Blockchain from unnoticed tampering. Moreover, you can see the encrypted voter address. Feel free to search for your own vote in the Blockchain, identifiable by matching your From Address, which you will find in step 3.
         </h6>
         <div class="row justify-content-end d-block d-sm-none mb-4">
           <div class="col-12 blockchain-info">
@@ -349,7 +349,7 @@
                   </li>
 
                   <li class="list-group-item">
-                    <span class="block-info">From Address<small>(That's Yours!)</small></span>
+                    <span class="block-info">From Address <small>(That's Yours!)</small></span>
                     <br />
                     <div class="text-truncate">
                       <small>{{ casted_vote['from_address'] }}</small
@@ -358,7 +358,7 @@
                   </li>
 
                   <li class="list-group-item">
-                    <span class="block-info">To Address<small>(Your Candidate!)</small></span>
+                    <span class="block-info">To Address <small>(Your Candidate!)</small></span>
                     <br />
                     <div class="text-truncate">
                       <small>{{ casted_vote['to_address'] }}</small><br />
