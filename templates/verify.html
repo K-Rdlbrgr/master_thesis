@@ -107,10 +107,12 @@
                 </h5>
                 <ul class="list-group list-group-flush">
                   <li class="list-group-item">
-                    <span class="block-info">Candidate's Name</span>
+                    <span class="block-info">Candidates</span>
                     <br />
                     <div class="text-truncate">
-                      <small>{{ casted_vote['candidate'] }}</small><br />
+                      <div class="candidates">
+                        <small>{{ casted_vote['candidate']| safe }}</small><br />
+                      </div>
                     </div>
                   </li>
 
@@ -146,7 +148,7 @@
         <h6 class="text-center">
             Please support our Research by filling out the following survey. It takes less than three minutes and gives you the chance to win a free Dinner for you and three friends at Azure Restaurant on Campus! The winner will be contacted tomorrow. Thank you!
         </h6>
-        <div class="mt-2">
+        <div class="mt-3">
           <a href="https://novasbe.az1.qualtrics.com/jfe/form/SV_cYoLm5iLXkqiG1v">
             <button type="button" class="btn btn-lg" data-toggle="" data-target="">
               Survey
@@ -244,6 +246,15 @@
                       </div>
                     </li>
 
+                    {% if election_ended %}
+                    <li class="list-group-item">
+                      <span class="block-info">To Address</span><br />
+                      <div class="text-truncate">
+                        <small>{{ block['to_address'] }}</small>
+                      </div>
+                    </li>
+                    {% endif %}
+
                     <li class="list-group-item">
                       <span class="block-info">Timestamp</span><br />
                       <div class="text-truncate">
@@ -338,7 +349,7 @@
                   </li>
 
                   <li class="list-group-item">
-                    <span class="block-info">From Address <small>(That's Yours!)</small></span>
+                    <span class="block-info">From Address<small>(That's Yours!)</small></span>
                     <br />
                     <div class="text-truncate">
                       <small>{{ casted_vote['from_address'] }}</small
@@ -347,16 +358,18 @@
                   </li>
 
                   <li class="list-group-item">
-                    <span class="block-info">To Address <small>(Your Candidate!)</small></span>
+                    <span class="block-info">To Address<small>(Your Candidate!)</small></span>
                     <br />
                     <div class="text-truncate">
                       <small>{{ casted_vote['to_address'] }}</small><br />
                     </div>
                     <br>
-                    <span class="block-info">Candidate's Name</span>
+                    <span class="block-info">Candidates</span>
                     <br />
                     <div class="text-truncate">
-                      <small>{{ casted_vote['candidate'] }}</small><br />
+                      <div class="candidates">
+                        <small>{{ casted_vote['candidate']| safe }}</small><br />
+                      </div>
                     </div>
                   </li>
 
@@ -392,7 +405,7 @@
         <h6 class="text-center">
             Please support our Research by filling out the following survey. It takes less than three minutes and gives you the chance to win a free Dinner for you and three friends at Azure Restaurant on Campus! The winner will be contacted tomorrow. Thank you!
         </h6>
-        <div class="mt-2">
+        <div class="mt-3">
           <a href="https://novasbe.az1.qualtrics.com/jfe/form/SV_6ygxfnnECviFUTH">
             <button type="button" class="btn btn-lg" data-toggle="" data-target="">
               Survey

@@ -1,3 +1,8 @@
+// Display Survey Modal from the start
+$(window).on('load', function() {
+  $('#surveyModal').modal('show');
+});
+
 // Copy the Private Key to the Clipboard on the verification.html
 function copyFunction(id) {
   /* Get the text field */
@@ -24,11 +29,6 @@ if (!document.location.hash) {
   document.location.hash = 'check';
 }
 
-// Letting Blockchain Viewer start with the most recent Block
-var element = $('.scrolling-wrapper-flexbox').get(0);
-var left = element.scrollWidth;
-element.scrollLeft = left;
-
 // Displaying the selected candidate on the voting.html as part of the confirmation
 function confirmFunction() {
   var rad = document.vote_form.candidate;
@@ -41,7 +41,25 @@ function confirmFunction() {
       }
       console.log(this.value);
       document.getElementById('confirmation').innerHTML = this.value;
-      document.getElementById('confirmation_info').innerHTML = '<hr> Your selected candidate:';
+      document.getElementById('confirmation_info').innerHTML = '<hr> Your selected candidate list:';
     });
   }
 }
+
+// Manipulating the Confirm Button on the Voting Page
+function castFunction() {
+  var x = document.getElementById('castVoteButton');
+  var y = document.getElementById('castVoteSpinner');
+  if (x.style.display === 'block') {
+    x.style.display = 'none';
+    y.style.display = 'block';
+  } else {
+    x.style.display = 'block';
+    y.style.display = 'none';
+  }
+}
+
+// Letting Blockchain Viewer start with the most recent Block
+var element = $('.scrolling-wrapper-flexbox').get(0);
+var left = element.scrollWidth;
+element.scrollLeft = left;

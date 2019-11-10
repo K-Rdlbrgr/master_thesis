@@ -75,13 +75,21 @@
           </h6>
           <div class="container">
             <div class="row justify-content-center">
-              <div class="col-8 col-sm-6 col-md-5 col-lg-4">
+              <div class="col-12 col-sm-10 col-md-8 col-lg-6">
                 <div class="candidate-input text-left">
                   <form action="{{ url_for('process') }}" method="POST" id="vote_form" name="vote_form">
                     {% for candidate in election_candidates %}
-                      <div class="inline-block">
-                        <input type="radio" name="candidate" id="candidate-{{ candidate['number'] }}" value="{{ candidate['name'] }}" required/><label class="ml-3" for="candidate-{{ candidate['number'] }}"> {{ candidate['name'] }}</label>
+                      <div class="row align-items-center">
+                        <div class="col-1">
+                          <input type="radio" name="candidate" id="candidate-{{ candidate['number'] }}" value="{{ candidate['name'] }}" required/>
+                        </div>
+                        <div class="col-10 col-sm-11">
+                          <label class="ml-3" for="candidate-{{ candidate['number'] }}">{{ candidate['name']| safe }}</label>
+                        </div>
                       </div>
+                      {% if candidate['number'] != election_candidates|length %}
+                        <hr>
+                      {% endif %}
                     {% endfor %}
                 </div>
               </div>
@@ -130,13 +138,26 @@
           </div>
           </div>
           <div class="modal-body text-center">
-            <h6>Confirm your vote by clicking on the button below. You will be directed to the <strong>verification page</strong> on which you can make sure your vote was counted and <strong>win a free dinner at Azure for you and your friends!</strong></h6>
+            <div class="row align-items-center">
+              <div class="col-12 col-sm-2 mb-3 mb-sm-0"><i class="fas fa-exclamation-triangle fa-3x"></i></div>
+              <div class="col-12 col-sm-10">
+                <h6 style="text-align: justify">Confirm your vote by clicking on the button below. This might take a couple of seconds, so please be patient and <strong>do not refresh</strong> the page after clicking the confirm button. You will be directed to the <strong>verification page</strong> on which you can make sure your vote was casted correctly. In case you see the Google SignIn Page next, your session expired and you will have to redo the process.</h6>
+              </div>
+            </div>
             <h6 id="confirmation_info"></h6>
             <h6 id="confirmation" style="font-weight: 700"></h6>
             
-            <div class="confirm-vote">
-              <input class="btn btn-lg mt-3" type="submit" value="Confirm Vote">
-          </div>
+            <div class="confirm-vote" id="castVoteButton" style="display:block">
+              <input class="btn btn-lg mt-3" type="submit" value="Confirm Vote" onclick="castFunction()">
+            </div>
+            <div class="text-center justify-content-center inline-block" id="castVoteSpinner" style="display:none; width: 100%">
+              <div class="btn btn-lg mt-3 loading-button" >
+                <div class="spinner-border text-light text-center inline-block" role="status" style="position: relative">
+                  <span class="sr-only">Loading...</span>
+                </div> 
+                <span class="ml-2 inline-block" style="font-size: 1.25rem; position: relative">Casting the Vote</s>
+              </div>
+            </div> 
           </div>
         </div>
       </div>

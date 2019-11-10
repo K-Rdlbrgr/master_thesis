@@ -25,6 +25,31 @@
 
   <body>
 
+    <!-- Modal -->
+    <div class="modal fade" id="surveyModal">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-body text-center">
+            <div class="row align-items-center">
+              <div class="col-12 col-sm-6 d-none d-sm-block survey-image">
+                <img src="/static/img/azure1.jpg" alt="azure1">
+              </div>
+              <div class="col-12 col-sm-6 survey-text pt-3 pb-3 pt-sm-0 pb-sm-0">
+                <h4><strong>SUPPORT US AND WIN A FREE DINNER FOR YOU AND YOUR FRIENDS!</strong></h4>
+                <hr class="d-none d-sm-block">
+                <div class="survey-image-small mt-3 mb-3 d-block d-sm-none">
+                  <img src="/static/img/azure2.jpg" alt="azure2" class="d-block d-sm-none">
+                </div>
+                <h6 style="text-align: justify">In the course of our Master thesis, we committed the last three months to provide you and all NOVA students with a smooth online-voting application. Without your help this effort was useless. If you want to support our mission, please commit three minutes of your time and fill out the survey in Step 4 on this page.<br>
+                Since we appreciate your help you have the chance to win a free dinner at <strong>Azure Restaurant</strong> on Campus for you and three friends. We will contact the winner tomorrow.</h6>
+                <button type="button" class="btn btn-lg mt-3" data-dismiss="modal" aria-label="Close">Got it!</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="header-wrapper text-center">
       <div class="header-overlap">
         <div class="row align-items-center">
@@ -46,7 +71,7 @@
               <h1 class="mb-3"><i class="fas fa-check"></i> THANK YOU FOR VOTING !</h1>
               <hr />
               <h5>
-                Welcome to the Verification page. In the following, you are able to verify whether your vote was counted
+                Welcome to the Verification page. Here, you are able to verify whether your vote was counted
                 correctly. Please follow the steps.
               </h5>
             </div>
@@ -151,7 +176,7 @@
         <h6 class="text-center">
           Please support our Research by filling out the following survey. It takes less than three minutes and gives you the chance to win a free Dinner for you and three friends at Azure Restaurant on Campus! The winner will be contacted tomorrow. Thank you!
         </h6>
-        <div class="mt-2">
+        <div class="mt-3">
           <a href="https://novasbe.az1.qualtrics.com/jfe/form/SV_cYoLm5iLXkqiG1v">
             <button type="button" class="btn btn-lg" data-toggle="" data-target="">
               Survey
@@ -206,7 +231,7 @@
         </div>
         <h2>THE VOTING BLOCKCHAIN</h2>
         <hr />
-        <h6>
+        <h6 class="mb-5">
           The illustration below shows this system’s blockchain, which contains all casted votes in an encrypted and anonymous manner. One block means one vote. To encrypt the vote, each block includes a hash and the previous block’s hash, which are security numbers randomly calculated from the vote’s data. Including both, current and previous hash, creates a chain between all the votes which protects them from unnoticed tampering. Moreover, you can see the encrypted voter address. Feel free to search for your own vote in the Blockchain, identifiable by matching your From Address, which you will find in step 3.
         </h6>
         <div class="row justify-content-end d-block d-sm-none mb-4">
@@ -234,7 +259,7 @@
           </div>
         </div>
         <div class="blockchain-inner">
-          <div class="row text-left mt-5">
+          <div class="row text-left">
             <div class="col-12">
               <div class="scrolling-wrapper-flexbox">
                 {% for block in blockchain %}
@@ -336,7 +361,7 @@
         <h6 class="text-center">
           Please support our Research by filling out the following survey. It takes less than three minutes and gives you the chance to win a free Dinner for you and three friends at Azure Restaurant on Campus! The winner will be contacted tomorrow. Thank you!
         </h6>
-        <div class="mt-2">
+        <div class="mt-3">
           <a href="https://novasbe.az1.qualtrics.com/jfe/form/SV_6ygxfnnECviFUTH">
             <button type="button" class="btn btn-lg" data-toggle="" data-target="">
               Survey

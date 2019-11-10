@@ -107,21 +107,21 @@ class Elections(db.Model):
         self.end_time = end_time
         self.program = program
 
-# THe Candidates table contains all the information of the candidates such as the user_id and the name as well as the election_id they are candidating for
+# THe Candidates table contains all the information of the candidates such as their list and the name as well as the election_id they are candidating for
 class Candidates(db.Model):
     __tablename__ = 'candidates'
     candidate_id = db.Column(db.Integer, primary_key=True)
     election_id = db.Column(
-        db.Integer, db.ForeignKey('elections.election_id'))
-    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
+    db.Integer, db.ForeignKey('elections.election_id'))
+    list = db.Column(db.String(10))
     name = db.Column(db.String(100))
     program = db.Column(db.String(200))
     address = db.Column(db.String(34), unique=True)
 
-    def __init__(self, candidate_id, election_id, user_id, name, program, address):
+    def __init__(self, candidate_id, election_id, list, name, program, address):
         self.candidate_id = candidate_id
         self.election_id = election_id
-        self.user_id = user_id
+        self.list = list
         self.name = name
         self.program = program
         self.address = address
@@ -314,8 +314,8 @@ def callback():
     if userinfo_response.json().get("email_verified"):
         unique_id = userinfo_response.json()["sub"]
         print(f'This is my Google ID {unique_id}')
-        student_id = userinfo_response.json()["email"][0:5]
         users_email = userinfo_response.json()["email"]
+        student_id = users_email[:users_email.index('@')]
         
     else:
         return "User email not available or not verified by Google.", 400
@@ -557,12 +557,12 @@ def process():
         # In case an error occured during the TRY, the transaction gets rolled back   
         except:
             trans.rollback()
-            print('Got an except')
+            print('Got an except/Error got raised during the block creation')
             
         # Finally the transaction gets closed to ensure no open idle connections
         finally:
             trans.close()
-            print('I was here')
+            print('Transaction got closed')
             
         if not flag:      
     
@@ -713,6 +713,27 @@ def verify():
         print(f'We are n the Verify Page and the version is {version}')
         print(f'We are n the Verify Page and the voter_id is {voter_id}')
         
+    # Query the end_time of the election the user participated in to decide if the blockchain also displays the to addresses or not
+    
+    # Specify User ID for the Query
+    voter_id = current_user.id
+    
+    voter_election_end_time_query = f"""SELECT e.end_time
+                                          FROM elections AS e
+                                          INNER JOIN users AS u
+                                          ON e.election_id = u.election_id
+                                          WHERE user_id = {voter_id}"""
+    
+    voter_election_end_time_results = engine.execute(voter_election_end_time_query)
+    voter_election_end_time_result = voter_election_end_time_results.first()
+    voter_election_end_time = voter_election_end_time_result[0]
+    
+    # Introduce variable if Election already ended
+    if voter_election_end_time < datetime.datetime.now():
+        election_ended = True
+    else:
+        election_ended = False
+    
     # The system distinguishes between a user coming from the Google SignIn or the verification/verify route since coming from the latter means the system has to perform the Verify Your Vote feature
     if request.method == "POST":
         
@@ -803,7 +824,7 @@ def verify():
                        'value': verify_vote_result[6],
                        'signature': verify_vote_result[7],}
             
-        return render_template('verify.html', casted_vote=casted_vote, version=version, blockchain=blockchain)
+        return render_template('verify.html', casted_vote=casted_vote, version=version, blockchain=blockchain, election_ended=election_ended)
     
     else:
         # Create empty list for Blockchain which will result in a list of dictionaries
@@ -847,7 +868,7 @@ def verify():
         # Close the ResultProxy to not risk open and unused DB connections
         blockchain_results.close()
         
-        return render_template('verify.html', version=version, blockchain=blockchain)
+        return render_template('verify.html', version=version, blockchain=blockchain, election_ended=election_ended)
 
 # Before running the app we check in which mdoe (development/production) we are
 if ENV == 'dev':

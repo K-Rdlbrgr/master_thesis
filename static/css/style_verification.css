@@ -126,7 +126,8 @@ hr.nova-logo {
 
 .verify-vote-button input,
 .voter-credentials button,
-.two-factor-authentication {
+.two-factor-authentication,
+.modal-body button {
   background: linear-gradient(12deg, rgba(49, 224, 131, 1) 0%, rgba(25, 205, 227, 1) 200%);
   border-radius: 20px;
   color: white;
@@ -135,10 +136,56 @@ hr.nova-logo {
 }
 
 .verify-vote-button input:hover,
-.voter-credentials button:hover {
+.voter-credentials button:hover,
+.modal-body button:hover {
   background: linear-gradient(12deg, rgb(42, 185, 109) 0%, rgb(20, 162, 180) 200%);
   color: white;
   border-color: var(--primary-bg-light);
+}
+
+.survey-image {
+  display: block;
+  height: 100%;
+  padding: 0;
+  overflow: hidden;
+}
+
+.survey-image img {
+  display: flex;
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-body {
+  padding: 0;
+}
+
+.modal-body .row {
+  margin: 0;
+}
+
+.survey-text {
+  padding-left: 25px;
+  padding-right: 25px;
+}
+
+.survey-image-small {
+  display: block;
+  height: 200px;
+  margin: 0 -25px 0 -25px;
+  overflow: hidden;
+}
+
+.survey-image-small img {
+  display: flex;
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+  align-items: center;
+  justify-content: center;
 }
 
 .survey button {
@@ -251,7 +298,7 @@ hr.nova-logo {
   -webkit-overflow-scrolling: touch;
 }
 
-.card {
+.scrolling-wrapper-flexbox .card {
   background: rgba(27, 27, 27, 0.8);
   flex: 0 0 auto;
   max-width: 20vw;
@@ -259,7 +306,7 @@ hr.nova-logo {
   min-height: 20vh;
 }
 
-.card li {
+.scrolling-wrapper-flexbox .card li {
   background: rgba(27, 27, 27, 0.2);
 }
 
@@ -270,34 +317,33 @@ hr.nova-logo {
 }
 
 @media (max-width: 1300px) {
-  .card {
+  .scrolling-wrapper-flexbox .card {
     max-width: 30vw;
   }
 }
 @media (max-width: 1000px) {
-  .card {
+  .scrolling-wrapper-flexbox .card {
     max-width: 40vw;
   }
 }
 @media (max-width: 850px) {
-  .card {
+  .scrolling-wrapper-flexbox .card {
     max-width: 50vw;
   }
 }
 @media (max-width: 650px) {
-  .card {
+  .scrolling-wrapper-flexbox .card {
     max-width: 65vw;
   }
 }
 @media (max-width: 500px) {
-  .card {
+  .scrolling-wrapper-flexbox .card {
     max-width: 80vw;
   }
 }
 
 .blockchain-info .card {
   background: rgba(27, 27, 27, 0.8);
-  /* background: rgba(192, 11, 11, 0.7); */
   flex: 0 0 auto;
   margin: 0;
   color: var(--primary-text-bright);

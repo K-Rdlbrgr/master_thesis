@@ -135,7 +135,8 @@ hr.nova-logo {
   fill: black;
 }
 
-.submit-vote button {
+.submit-vote button,
+.loading-button {
   background: linear-gradient(12deg, rgba(49, 224, 131, 1) 0%, rgba(25, 205, 227, 1) 200%);
   border-radius: 20px;
   color: white;
@@ -147,6 +148,24 @@ hr.nova-logo {
   background: linear-gradient(12deg, rgb(42, 185, 109) 0%, rgb(20, 162, 180) 200%);
   color: white;
   border-color: var(--primary-bg-light);
+}
+
+.loading-button:hover {
+  background: linear-gradient(12deg, rgba(49, 224, 131, 1) 0%, rgba(25, 205, 227, 1) 200%);
+  color: white;
+  border-color: var(--primary-bg-light);
+}
+
+.spinner-border {
+  width: 1.5rem;
+  height: 1.5rem;
+  display: inline-block;
+  vertical-align: text-bottom;
+  border: 0.2em solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  -webkit-animation: spinner-border 0.75s linear infinite;
+  animation: spinner-border 0.75s linear infinite;
 }
 
 .line {
@@ -233,4 +252,11 @@ hr.nova-logo {
   border-top: 48px solid white;
   border-left: 50vw solid transparent;
   border-right: 50vw solid transparent;
+}
+
+@media (max-width: 420px) {
+  .close {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
 }
