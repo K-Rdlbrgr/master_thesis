@@ -71,7 +71,7 @@ hr.nova-logo {
 }
 
 .nova-logo-header {
-  height: 100px;
+  max-height: 10vh;
 }
 
 .header-wrapper {
