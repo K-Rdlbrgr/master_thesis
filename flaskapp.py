@@ -444,6 +444,15 @@ def process():
     end_time = time_result[0]
     start_time = time_result[1]
     
+    # Query users corresponding election_id
+    voter_election_id_query = f"""SELECT election_id
+                                  FROM users
+                                  WHERE user_id = {voter_id}"""
+                            
+    voter_election_id_results = engine.execute(voter_election_id_query)
+    voter_election_id_result = voter_election_id_results.first()
+    voter_election_id = voter_election_id_result[0]
+    
     # Checking if the current voting approach is still valid regarding the end_time limit of the election
     if end_time < datetime.datetime.now():
         message = f'You cannot vote anymore since the election ended on {end_time.day}/{end_time.month}/{end_time.year} at {end_time.strftime("%H:%M:%S")}'
@@ -473,7 +482,7 @@ def process():
         
         # Querying the database to find the address of the candidate    
         address_query = f"""SELECT address FROM candidates
-                            WHERE name = '{candidate}'"""
+                            WHERE name = '{candidate}' AND election_id = {voter_election_id}"""
         
         address_results = engine.execute(address_query)
         for r in address_results:
